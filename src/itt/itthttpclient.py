@@ -3,7 +3,7 @@ Created on Mar 13, 2013
 
 @author: pjay
 '''
-
+import argparse
 import requests
 import hashlib
 import time
@@ -21,10 +21,13 @@ class IttHttpClient():
     def run(self):
         ## Read config!
         
-        url = 'http://127.0.0.1:8000/fast/'
-        print time.asctime(), "XXX: Client begins download - %s" % (url)
-        download = requests.get(url)
-        print time.asctime(), "XXX: Client finishes download - %s" % (url)
+        parser = argparse.ArgumentParser(description='ITT HTTP Test Client.')
+        parser.add_argument('-u','--url')
+        args = parser.parse_args()
+        
+        print time.asctime(), "XXX: Client begins download - %s" % (args.url)
+        download = requests.get(args.url)
+        print time.asctime(), "XXX: Client finishes download - %s" % (args.url)
  
         if download.status_code == 200:
             shasum = hashlib.sha1(download.content).hexdigest()
