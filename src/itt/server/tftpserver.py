@@ -7,7 +7,7 @@ import multiprocessing
 import tftpy
 import time
 
-from utils.log import log, class_logging
+from itt.utils.log import log, class_logging
 
 
 @class_logging

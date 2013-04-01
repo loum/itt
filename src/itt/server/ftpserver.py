@@ -2,11 +2,11 @@ __all__ = [
     "FtpServer",
 ]
 
-import itt
 import multiprocessing
 from pyftpdlib import ftpserver
 
-from utils.log import log, class_logging
+import itt
+from itt.utils.log import log, class_logging
 
 
 @class_logging
