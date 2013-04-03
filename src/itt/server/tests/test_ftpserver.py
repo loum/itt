@@ -1,4 +1,9 @@
 import unittest2
+import socket
+import os
+import signal
+import time
+
 import itt
 
 #from utils.files import dummy_filesystem
@@ -6,15 +11,57 @@ import itt
 class TestFtpServer(unittest2.TestCase):
 
     def test_init(self):
-        """Do nothing for now.
+        """Test initialisation of the FtpServer.
         """
-        return
+        with self.assertRaises(TypeError):
+            itt.FtpServer()
 
-    def test_server_start(self):
-        """Test FTP server starts without errors.
+        # Default port.
+        ftp = itt.FtpServer(root='/tmp')
+        expected = 2121
+        received = ftp.port
+        msg = ('Default FTP server port should be 2121 - received %s' %
+               str(received))
+        self.assertEqual(received, expected, msg)
+        ftp = None
+
+        # Overriden port.
+        received = port_to_use = 2122
+        tftp = itt.FtpServer(root='/tmp', port=port_to_use)
+        expected = tftp.port
+        msg = ('Overriden port value should be 2122 - received %s' %
+               str(received))
+        self.assertEqual(received, expected, msg)
+        ftp = None
+
+    def test_server_daemon(self):
+        """Test FTP server daemon start and stop.
         """
-        server = itt.FtpServer()
-
+        server = itt.FtpServer(root='/tmp')
         server.start()
+        self.port_checker('127.0.0.1', server.port)
 
-        print('inside test_server_start()')
+        # Now stop the daemon.
+        server.stop()
+
+        # Allow time until server releases resources - ugly.
+        time.sleep(0.5)
+
+        # Will throw exception if previous process is still bound.
+        server.start()
+        self.port_checker('', server.port)
+        pid = server.proc.pid
+        os.kill(pid, signal.SIGINT)
+
+    def port_checker(self, host, port):
+        with self.assertRaises(socket.error) as cm:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind((host, port))
+
+        # Verify that exception code.
+        (errno, err_msg) = cm.exception
+        expected = 98           # Code 98 for 'Address already in use'
+        received = errno
+        msg = ('Port bind should generate error code 98 - received %d' %
+               received)
+        self.assertEqual(expected, received, msg)

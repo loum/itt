@@ -1,7 +1,7 @@
 import unittest2
-import itt
 import os.path
 
+import itt
 from utils.files import dummy_filesystem
 
 class TestTftpServer(unittest2.TestCase):
@@ -17,16 +17,18 @@ class TestTftpServer(unittest2.TestCase):
         with self.assertRaises(TypeError):
             tftp = itt.TftpServer()
 
+        # Default port.
         tftp = itt.TftpServer(root='/tmp')
-        received = 6969
-        expected = tftp.port
-        msg = ('Default port value should be 6969 - received %s' %
+        expected = 6969
+        received = tftp.port
+        msg = ('Default TFTP port should be 6969 - received %s' %
                str(received))
         self.assertEqual(received, expected, msg)
         tftp = None
 
-        tftp = itt.TftpServer(root='/tmp', port=6970)
-        received = 6970
+        # Overriden port.
+        received = port_to_use = 6970
+        tftp = itt.TftpServer(root='/tmp', port=port_to_use)
         expected = tftp.port
         msg = ('Overriden port value should be 6970 - received %s' %
                str(received))

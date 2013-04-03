@@ -2,18 +2,18 @@ __all__ = [
     "TftpServer",
 ]
 
-import itt
 import multiprocessing
 import tftpy
 import time
 
+import itt
 from itt.utils.log import log, class_logging
 
 
 @class_logging
 class TftpServer(itt.Server):
     """Simple TFTP server built on top of the :mod:`tftpy` module's
-    :class:`tftpy.TftpServer`.
+    :class:`tftpy.TftpServer` class.
 
     Example usage of the default settings as follows ...
 
@@ -103,7 +103,7 @@ class TftpServer(itt.Server):
         if self.daemon:
             self.proc = multiprocessing.Process(target=self._start_server)
             self.proc.start()
-            time.sleep(0.2) # can do better -- check TODO.
+            time.sleep(0.2)         # can do better -- check TODO.
 
         else:
             self._start_server()
