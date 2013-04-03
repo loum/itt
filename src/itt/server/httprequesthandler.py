@@ -23,7 +23,25 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
-        
+
+    def do_POST(self):
+        """Response to a POST request."""
+        log.info("HTTP POST request received from %s on port %s for %s" % (
+            self.client_address[0],
+            self.client_address[1],
+            self.path,
+        ))
+
+        self.send_response(200)
+        self.end_headers()
+
+        log.info("HTTP POST request finished for %s on port %s for %s\n   Resulting SHA1 sum of content: %s" % (
+           self.client_address[0],
+           self.client_address[1],
+           self.path,
+           hashlib.sha1(self.rfile.read()).hexdigest(),
+        ))
+
     def do_GET(self):
         """Respond to a GET request."""
         log.info("HTTP GET request received from %s on port %s for %s" % (
@@ -31,15 +49,15 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.client_address[1],
             self.path,
         ))
-        
+
         path_array = self.path.split('/')
-        
+
         self.send_response(200)
         self.send_header("Content-type", "text/plain")
         self.end_headers()
-        
+
         self.storeAndWrite(("Selected path %s\n" % path_array[1]), self.wfile)
-        
+
         if path_array[1] == 'fast':
             self.storeAndWrite(("Fastest possible transfer *\n"), self.wfile)
             self.storeAndWrite(("* as limited by the TCP stack & network\n"), self.wfile)
