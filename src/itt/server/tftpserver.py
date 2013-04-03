@@ -49,13 +49,14 @@ class TftpServer(itt.Server):
 
         **Args:**
             root (str): Directory local to the server that will serve/write
-                        file.
+            file.
             
         **Kwargs:**
             port (int): Port that the server process listens on
-                        (default=6969)
+            (default=6969)
+
             daemon (bool): Defines whether server process is launched as a
-                           daemon (default=True)
+            daemon (default=True)
         """
         super(TftpServer, self).__init__()
         self.port = port
@@ -115,13 +116,14 @@ class TftpServer(itt.Server):
     def _start_server(self):
         """Responsible for the actual TFTP server start.
 
-        Invokes the tftpy object's `listen` method which starts the TFTP
+        Invokes the :meth:`tftpy.listen` method which starts the TFTP
         server's loop sequence for active connections.
 
-        .. note::
+        .. warning::
 
             Should not be called directly.  You probably want to call the
-            `start` method instead.
+            :meth:`TftpServer.start` method instead.
+
         """
         self.server = tftpy.TftpServer(self.root)
         try:

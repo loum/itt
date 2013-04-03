@@ -13,10 +13,28 @@ from itt.utils.log import log, class_logging
 
 @class_logging
 class FtpServer(itt.Server):
-    """Simple FTP server built on top of the :mod:`pyftpdlib` module's
-    :class:`ftpserver` class.
-    """
+    """Simple FTP server built on top of the :class:`pyftpdlib.ftpserver`
+    class.
 
+    Example usage of the default settings as follows using the direcotry
+    '/tmp' as the FTP server's root:
+
+    >>> from itt.server.ftpserver import FtpServer
+    >>> server = FtpServer(root='/tmp')
+    >>> server.start()
+    ...
+
+    By default, this will bind the FTP server to 127.0.0.1:2121
+
+    From here, use your preferred FTP client to interface with the server.
+
+    To stop the FTP server:
+
+    >>> server.stop()
+
+    Alternatively, Ctrl-C will also do the trick.
+
+    """
     def __init__(self,
                  root,
                  port=2121):
@@ -27,11 +45,11 @@ class FtpServer(itt.Server):
 
         **Args:**
             root (str): Directory local to the server that will serve/write
-                        file.
+            file.
 
         **Kwargs:**
             port (int): Port that the server process listens on
-                        (default=2121)
+            (default=2121)
         """
         super(FtpServer, self).__init__()
         self.root = root
@@ -56,13 +74,15 @@ class FtpServer(itt.Server):
 
     def start(self):
         """Wrapper around the FTP server start process.
+
+        Call the :meth:`start` method to start the FTP server.o
         """
         log_msg = 'FTP server process'
 
         # Reset the internal event flag
         log.info('%s - starting ...' % log_msg)
-        self.proc = multiprocessing.Process(target=self._run_server,
-                                                args=(self.exit,))
+        self.proc = multiprocessing.Process(target=self._start_server,
+                                            args=(self.exit,))
         self.proc.start()
         log.info('%s - started with PID %d' % (log_msg, self.proc.pid))
         time.sleep(0.01)         # can do better -- check TODO.
@@ -71,8 +91,21 @@ class FtpServer(itt.Server):
         if self.proc.is_alive():
             self.pid = self.proc.pid
 
-    def _run_server(self, event):
-        """
+    def _start_server(self, event):
+        """Responsible for the actual FTP server start.
+
+        Invokes the :method:`pyftpdlib.ftpserver.serve_forever` method and
+        listens for incoming connections.
+
+        .. warning::
+
+            Should not be called directly.  You probably want to call the
+            :method:`FtpServer.start` method instead.
+
+        **Args:**
+            event (:mod:`multiprocessing.Event`): Internal semaphore that
+            terminates the FTP server once it is set.
+
         """
         signal.signal(signal.SIGINT, self.signal_handler)
 
@@ -87,7 +120,7 @@ class FtpServer(itt.Server):
         server.close_all()
 
     def stop(self):
-        """
+        """Responsible for the actual FTP server stop.
         """
         log_msg = 'FTP server process'
         log.info('%s - setting terminate flag ...' % log_msg)

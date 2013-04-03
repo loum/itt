@@ -19,15 +19,12 @@ class TestTftpClient(unittest2.TestCase):
         cls._test_dir = os.path.dirname(cls._temp_fs.name)
         cls._test_filename = os.path.basename(cls._temp_fs.name)
 
-        print('test dir: "%s" file: "%s"' % (cls._test_dir,
-                                             cls._test_filename))
-
         # Start the TFTP server.
         cls._server = itt.TftpServer(root=cls._test_dir)
         cls._server.start()
 
     def test_init_no_args(self):
-        """Test constructon of the IP Test Tool base TftpClient class.
+        """Test constructon of the IP Test Tool TftpClient class.
         """
         self.assertRaises(TypeError, itt.TftpClient)
 
