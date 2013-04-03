@@ -52,6 +52,13 @@ class Client(object):
         if self._port == 6969:
             self.create_tftp_session()
 
+    def __init__(self):
+        """Provide a single arg version of __init__ for HttpClient.
+        """
+        ##  XXX: suggest we think about rewriting the three-arg version to be
+        ##       less TFTP specific
+        pass
+
     def get(self, remotename, localname=None):
         """Retrieve a file from the server resource.
 
