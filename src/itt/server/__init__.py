@@ -45,7 +45,7 @@ class Server(object):
     def bind(self):
         return self._bind
 
-    @port.setter
+    @bind.setter
     @abstractmethod
     def bind(self, value):
         self._bind = value
