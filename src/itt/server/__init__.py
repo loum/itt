@@ -25,6 +25,7 @@ class Server(object):
         self._proc = None
         self._daemon = None
         self._server = None
+        self._bind = 'localhost'
 
     @abstractmethod
     def start(self): pass
