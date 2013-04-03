@@ -105,6 +105,10 @@ class TftpServer(itt.Server):
             self.proc.start()
             time.sleep(0.2)         # can do better -- check TODO.
 
+            # Flag the server as being operational.
+            if self.proc.is_alive():
+                self.pid = self.proc.pid
+
         else:
             self._start_server()
 
@@ -155,5 +159,8 @@ class TftpServer(itt.Server):
             log.info('%s - terminated.' % log_msg)
         else:
             log.warn('%s - not active' % log_msg)
+
+        # Flag the server as not operational.
+        self.pid = None
 
         return self.proc.is_alive()

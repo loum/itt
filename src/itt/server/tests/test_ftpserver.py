@@ -41,11 +41,19 @@ class TestFtpServer(unittest2.TestCase):
         server.start()
         self.port_checker('127.0.0.1', server.port)
 
+        # We should have a valid PID.
+        msg = 'FTP server process should have a valid PID'
+        self.assertNotEqual(None, server.pid, msg)
+
         # Now stop the daemon.
         server.stop()
 
         # Allow time until server releases resources - ugly.
-        time.sleep(0.5)
+        time.sleep(0.1)
+
+        # PID should be unset.
+        msg = 'FTP server PID should not be None'
+        self.assertEqual(None, server.pid, msg)
 
         # Will throw exception if previous process is still bound.
         server.start()

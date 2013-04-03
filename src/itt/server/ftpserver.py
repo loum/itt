@@ -67,6 +67,10 @@ class FtpServer(itt.Server):
         log.info('%s - started with PID %d' % (log_msg, self.proc.pid))
         time.sleep(0.01)         # can do better -- check TODO.
 
+        # Flag the server as being operational.
+        if self.proc.is_alive():
+            self.pid = self.proc.pid
+
     def _run_server(self, event):
         """
         """
@@ -88,6 +92,9 @@ class FtpServer(itt.Server):
         log_msg = 'FTP server process'
         log.info('%s - setting terminate flag ...' % log_msg)
         self.exit.set()
+
+        # Flag the server as not operational.
+        self.pid = None
 
     def signal_handler(self, signal, frame):
         log.info('Ctrl-C intercepted ...')

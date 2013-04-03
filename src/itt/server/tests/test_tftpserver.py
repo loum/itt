@@ -42,13 +42,13 @@ class TestTftpServer(unittest2.TestCase):
 
         # Check that the server was started.
         server.start()
-        msg = 'Server process should be active'
-        self.assertTrue(server.proc.is_alive(), msg)
+        msg = 'TFTP server process should have a valid PID'
+        self.assertNotEqual(None, server.pid, msg)
 
         # Check that the server was shutdown.
-        server_state = server.stop()
-        msg = 'Server process should not be active'
-        self.assertFalse(server_state, msg)
+        server.stop()
+        msg = 'TFTP server PID should not None'
+        self.assertEqual(None, server.pid, msg)
 
     def tearDown(self):
         self.test_content = None

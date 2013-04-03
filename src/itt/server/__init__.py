@@ -4,6 +4,62 @@ __all__ = [
 
 from abc import ABCMeta, abstractmethod
 
+"""
+:mod:`server` --- IP Test Tool abstract base server class
+=========================================================
+
+.. module:: server
+    :synopsis: IP Test Tool abstract base server class.
+
+Base server class that provides a consistent interface across all server
+variants.
+
+The `thread` module templates the following public methods and attributes:
+
+    .. note::
+
+        All public attribute access is implemented in a Pythonic property
+        decorator style.
+
+.. attribute:: port
+
+    The port that the server process should bind to.
+
+.. attribute:: root
+
+    The directory structure that the server will server files to/from.
+
+.. attribute:: proc
+
+    Handle to the :mod:`multiprocessing` object.
+
+.. attribute:: daemon
+
+    Hmmm, not sure we need this attribute at the class level.  Probably
+    better defined in the control script -- caveat emptor as it may
+    disappear soon.
+
+.. attribute:: server
+
+    The intention behind the `server` attribute is to provide a common
+    access point to functionality provided via an alternate server-type
+    module.  For example, somewhere in the IP Test Tool :class:`TftpServer`
+    class is the following call:
+
+        self.server = tftpy.TftpServer(self.root)
+
+    This give us access to the nice features of the :mod:`tftp` module
+    that we can then use in our own :meth:`start` and :meth:`stop` methods.
+
+.. attribute:: bind
+
+    Name of the host address.  Defaults to `localhost`.
+
+.. attribute:: pid
+
+    The PID of the server process.  A value of ``None`` indicates an
+    inactive server.
+"""
 
 class Server(object):
     """IP Test Tool generic server class.
@@ -14,7 +70,6 @@ class Server(object):
     client interactions to various server resources.
 
     """
-
     __metaclass__ = ABCMeta
 
     def __init__(self):
@@ -26,12 +81,7 @@ class Server(object):
         self._daemon = None
         self._server = None
         self._bind = 'localhost'
-
-    @abstractmethod
-    def start(self): pass
-
-    @abstractmethod
-    def stop(self): pass
+        self._pid = None
 
     @property
     def port(self):
@@ -86,3 +136,9 @@ class Server(object):
     @abstractmethod
     def server(self, value):
         self._server = value
+
+    @abstractmethod
+    def start(self): pass
+
+    @abstractmethod
+    def stop(self): pass
