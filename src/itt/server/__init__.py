@@ -42,6 +42,15 @@ class Server(object):
         self._port = value
 
     @property
+    def bind(self):
+        return self._bind
+
+    @port.setter
+    @abstractmethod
+    def bind(self, value):
+        self._bind = value
+
+    @property
     def root(self):
         return self._root
 
