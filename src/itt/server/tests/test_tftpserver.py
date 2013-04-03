@@ -2,7 +2,7 @@ import unittest2
 import os.path
 
 import itt
-from utils.files import dummy_filesystem
+from itt.utils.files import dummy_filesystem
 
 class TestTftpServer(unittest2.TestCase):
 

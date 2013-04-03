@@ -1,74 +1,74 @@
+"""The :mod:`server` module aims to provide a consistent interface across
+all server variants.
+
+.. note::
+
+    The :mod:`server` module supports the following server types:
+
+    * :mod:`itt.HttpServer`
+    * :mod:`itt.TftpServer`
+    * :mod:`itt.FtpServer`
+
+"""
 __all__ = [
     "Server",
 ]
 
 from abc import ABCMeta, abstractmethod
 
-"""
-:mod:`server` --- IP Test Tool abstract base server class
-=========================================================
 
-.. module:: server
-    :synopsis: IP Test Tool abstract base server class.
+class Server(object):
+    """IP Test Tool base server class.
 
-Base server class that provides a consistent interface across all server
-variants.
-
-The `thread` module templates the following public methods and attributes:
+    :class:`Server` is built on top of the :mod:`abc` Abstract Base Class
+    module and is defined as "abstract".  It is not intended to be
+    instantiated directly.  Instead, it forces generalisations to 
+    implement a consistent interface.  This will hopefully simplify the
+    client interaction across various server resources.
 
     .. note::
 
         All public attribute access is implemented in a Pythonic property
         decorator style.
 
-.. attribute:: port
+    .. attribute:: port
 
-    The port that the server process should bind to.
+        The port that the server process should bind to.
 
-.. attribute:: root
+    .. attribute:: root
 
-    The directory structure that the server will server files to/from.
+        The directory structure that the server will server files to/from.
 
-.. attribute:: proc
+    .. attribute:: proc
 
-    Handle to the :mod:`multiprocessing` object.
+        Handle to the :mod:`multiprocessing` object.
 
-.. attribute:: daemon
+    .. attribute:: daemon
 
-    Hmmm, not sure we need this attribute at the class level.  Probably
-    better defined in the control script -- caveat emptor as it may
-    disappear soon.
+        Hmmm, not sure we need this attribute at the class level.  Probably
+        better defined in the control script -- caveat emptor as it may
+        disappear soon.
 
-.. attribute:: server
+    .. attribute:: server
 
-    The intention behind the `server` attribute is to provide a common
-    access point to functionality provided via an alternate server-type
-    module.  For example, somewhere in the IP Test Tool :class:`TftpServer`
-    class is the following call:
+        The intention behind the `server` attribute is to provide a common
+        access point to functionality provided via an alternate server-type
+        module.  For example, somewhere in the IP Test Tool :class:`TftpServer`
+        class is the following call:
 
-        self.server = tftpy.TftpServer(self.root)
+            self.server = tftpy.TftpServer(self.root)
 
-    This give us access to the nice features of the :mod:`tftp` module
-    that we can then use in our own :meth:`start` and :meth:`stop` methods.
+        This give us access to the nice features of the :mod:`tftp` module
+        that we can then use in our own :meth:`start` and :meth:`stop` methods.
 
-.. attribute:: bind
+    .. attribute:: bind
 
-    Name of the host address.  Defaults to `localhost`.
+        Name of the host address.  Defaults to `localhost`.
 
-.. attribute:: pid
+    .. attribute:: pid
 
-    The PID of the server process.  A value of ``None`` indicates an
-    inactive server.
-"""
-
-class Server(object):
-    """IP Test Tool generic server class.
-
-    Class server is defined as "abstract" so that it forces generalisations
-    to implement a consistent interface.  It is not intended to be
-    instantiated directly.  This will hopefully simplify the
-    client interactions to various server resources.
-
+        The PID of the server process.  A value of ``None`` indicates an
+        inactive server.
     """
     __metaclass__ = ABCMeta
 

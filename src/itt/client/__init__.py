@@ -11,8 +11,8 @@ from itt.utils.log import class_logging
 class Client(object):
     """IP Test Tool generic client class.
 
-    Through the `get` and `put` methods, the Client class allows interaction
-    with server infrastructure.
+    Through the `download` and `upload` methods, the Client class allows
+    interaction with server infrastructure.
 
     """
     __metaclass__ = ABCMeta
