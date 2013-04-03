@@ -75,20 +75,45 @@ class IttHandler(BaseHTTPServer.BaseHTTPRequestHandler):
            shasum,
         )
 
-class IttHttpServer:
-    
-    def run(self, bind='', port=8000):    
-        server_class = BaseHTTPServer.HTTPServer
-        httpd = server_class((bind, port), IttHandler)
-            
-        print time.asctime(), "XXX: Server Starts - %s:%s" % (bind, port)
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            pass
-        httpd.server_close()
-        print time.asctime(), "XXX: Server Stops - %s:%s" % (bind, port)
-    
+class HttpServer(itt.Server):
+
+    def __init__(self,
+                 port=8000,
+                 bind=''):
+        """HttpServer initialiser.
+        """
+        super(HttpServer, self).__init__()
+
+        self.port = port
+        self.bind = bind
+        self.server = None
+        self.handler = None
+
+    def start(self):
+        """Wrapper around the server start process.
+        """
+        log_msg = 'HTTP server process'
+        log.info('%s - starting ...' % log_msg)
+
+        self._start_server()
+
+    def _start_server(self):
+        """Instantiates a HTTP server.
+        """
+        self.server = BaseHTTPServer.HTTPServer((self.bind, self.port), self.handler)
+        self.server.serve_forever()
+
+    def stop(self):
+        """Kills a HTTP server.
+        """
+        log_msg = 'HTTP server process'
+        log.info('%s - terminating ...' % log_msg)
+        self.server.server_close()
+
 if __name__ == '__main__':
-    myServer = IttHttpServer()
-    myServer.run()
+    myServer = itt.HttpServer()
+    try:
+        myServer.start()
+    except KeyboardInterrupt:
+        pass
+    myServer.stop()
