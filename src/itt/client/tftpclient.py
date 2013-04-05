@@ -62,8 +62,8 @@ class TftpClient(itt.Client):
 
         **Kwargs:**
             localname (str): Name of retrived file on the local filesystem.
-                             If a name is not provided then the name of the
-                             retrieved file is used (default).
+            If a name is not provided then the name of the retrieved file
+            is used (default).
         """
         if localname is None:
             localname = remotename
