@@ -50,6 +50,13 @@ class FtpServer(itt.Server):
         **Kwargs:**
             port (int): Port that the server process listens on
             (default=2121)
+
+        .. warning::
+
+            TODO: currently, the anonymouse user has write permissions to
+            the the directory.  We probably want to create a valid user
+            and tailor permissions around require usage.
+
         """
         super(FtpServer, self).__init__()
         self.root = root
@@ -57,7 +64,7 @@ class FtpServer(itt.Server):
         self.exit = multiprocessing.Event()
 
         self._authorizer = ftpserver.DummyAuthorizer()
-        self._authorizer.add_anonymous(self.root)
+        self._authorizer.add_anonymous(self.root, perm='elrw')
 
         self._ftp_handler = ftpserver.FTPHandler
         self._ftp_handler.authorizer = self._authorizer

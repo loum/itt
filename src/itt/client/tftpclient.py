@@ -79,9 +79,9 @@ class TftpClient(itt.Client):
             localname (str): Name of the file to send to the server
 
         **Kwargs:**
-            remotename (str): Name of sent file to use on the server.
-                              If a name is not provided then the name of the
-                              sent file is used (default).
+            remotename (str): Name of sent file to use on the server.  If a
+            name is not provided then the name of the sent file is
+            used (default).
         """
         if remotename is None:
             remotename = localname
