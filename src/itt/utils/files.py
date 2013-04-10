@@ -1,11 +1,30 @@
 __all__ = [
     "RenamedTemporaryFile",
-    "dummy_filesystem"
+    "dummy_filesystem",
+    "is_writable",
 ]
 
 import os.path
 import tempfile
 from log import log
+
+def is_writable(path):
+    """Handy sugar function to check if the invoking user has write access
+    to *path*.
+
+    **Args:**
+        path (str): Path to the file name to check access to.
+
+    **Returns:**
+        object of the :mod:`file` type on success or ``None``.
+
+    """
+    try:
+        fh = open(path, 'w')
+    except IOError:
+        raise
+    else:
+        return fh
 
 def dummy_filesystem(content=None):
     """Not much to see here unless you're looking for a dummy
@@ -26,7 +45,7 @@ def dummy_filesystem(content=None):
         content (str): Stuff that you want in the test file.
 
     **Returns:**
-        temp_file): tempfile.NamedTemporaryFile object
+        temp_file: tempfile.NamedTemporaryFile object
     """
     temp_file = tempfile.NamedTemporaryFile()
 

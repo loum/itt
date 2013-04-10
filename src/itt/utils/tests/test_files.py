@@ -2,10 +2,19 @@ import unittest2
 import tempfile
 import os.path
 
-from utils.files import RenamedTemporaryFile, dummy_filesystem
+from itt.utils.files import (RenamedTemporaryFile,
+                             dummy_filesystem,
+                             is_writable)
 
 
 class TestUtilsFile(unittest2.TestCase):
+
+    def test_is_writable_valid(self):
+        """Test access to a writable file.
+        """
+        temp_fs = dummy_filesystem()
+        fs = is_writable(temp_fs.name)
+        self.assertNotEqual(fs, None)
 
     def test_dummy_filesystem(self):
         """Test the creation of the dummy filesystem.

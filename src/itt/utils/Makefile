@@ -1,12 +1,11 @@
 PY=/usr/bin/env python
-PYTHONPATH=..
+PYTHONPATH=../..
 LOG_CONF="conf"
 
 sdist:
 	$(PY) setup.py sdist
 
 test:
-	#PYTHONPATH=$(PYTHONPATH) nosetests -s -v
 	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) nosetests -s -v
 
 clean:

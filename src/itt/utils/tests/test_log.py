@@ -1,6 +1,6 @@
 import unittest2
 
-from utils.log import log
+from itt.utils.log import log
 
 class TestLog(unittest2.TestCase):
 
