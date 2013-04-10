@@ -139,3 +139,5 @@ class FtpServer(itt.Server):
     def signal_handler(self, signal, frame):
         log.info('Ctrl-C intercepted ...')
         self.stop()
+
+    def run(self): pass

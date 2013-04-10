@@ -16,8 +16,9 @@ __all__ = [
 
 from abc import ABCMeta, abstractmethod
 
+import itt.utils
 
-class Server(object):
+class Server(itt.utils.Daemon):
     """IP Test Tool base server class.
 
     :class:`Server` is built on top of the :mod:`abc` Abstract Base Class

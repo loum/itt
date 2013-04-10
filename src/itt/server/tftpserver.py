@@ -166,3 +166,5 @@ class TftpServer(itt.Server):
         self.pid = None
 
         return self.proc.is_alive()
+
+    def run(self): pass

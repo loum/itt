@@ -62,6 +62,8 @@ class HttpServer(itt.Server):
         log.info('%s - terminating ...' % log_msg)
         self.server.server_close()
 
+    def run(self): pass
+
 if __name__ == '__main__':
     myServer = itt.HttpServer(
         bind='',

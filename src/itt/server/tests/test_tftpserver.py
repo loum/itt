@@ -4,18 +4,19 @@ import os.path
 import itt
 from itt.utils.files import dummy_filesystem
 
-class TestTftpServer(unittest2.TestCase):
 
-    def setUp(self):
-        self.test_content = 'temp TFTP stuff'
-        self.temp_fs = dummy_filesystem(content=self.test_content)
-        self.test_dir = os.path.dirname(self.temp_fs.name)
+class TestTftpServer(unittest2.TestCase):
 
     def test_init(self):
         """Test initialisation of the TftpServer.
         """
         with self.assertRaises(TypeError):
-            tftp = itt.TftpServer()
+            itt.TftpServer()
+
+    def setUp(self):
+        self.test_content = 'temp TFTP stuff'
+        self.temp_fs = dummy_filesystem(content=self.test_content)
+        self.test_dir = os.path.dirname(self.temp_fs.name)
 
         # Default port.
         tftp = itt.TftpServer(root='/tmp')

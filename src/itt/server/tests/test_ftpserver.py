@@ -6,7 +6,6 @@ import time
 
 import itt
 
-#from utils.files import dummy_filesystem
 
 class TestFtpServer(unittest2.TestCase):
 
