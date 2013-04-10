@@ -76,6 +76,7 @@ class Server(itt.utils.Daemon):
     def __init__(self):
         """Server class initialisation.
         """
+        super(Server, self).__init__()
         self._port = None
         self._root = None
         self._proc = None
@@ -139,7 +140,10 @@ class Server(itt.utils.Daemon):
         self._server = value
 
     @abstractmethod
-    def start(self): pass
+    def start(self):
+        super(Server, self).start()
 
     @abstractmethod
-    def stop(self): pass
+    def stop(self):
+        super(Server, self).stop()
+

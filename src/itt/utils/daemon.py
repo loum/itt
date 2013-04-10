@@ -8,11 +8,11 @@ to support daemonisation of a process.
 """
 __all__ = [
     "Daemon",
+    "DaemonError",
 ]
 
 import sys
 import os
-import time
 import atexit
 import signal
 from abc import ABCMeta, abstractmethod
@@ -54,7 +54,7 @@ class Daemon(object):
     __metaclass__ = ABCMeta
 
     def __init__(self,
-                 pidfile,
+                 pidfile=None,
                  stdin='/dev/null',
                  stdout='/dev/null',
                  stderr='/dev/null',
@@ -66,12 +66,16 @@ class Daemon(object):
         be instantiated directly.  Instead, it forces generalisations
         to define their own :method:`run` method.  :method:`run`
         will be called after the process has been daemonised by
-        :method:`start` or :method:`restart`
+        :method:`start` or :method:`restart`.
 
-        **Args:**
-            pidfile (str): Path to the PID file.
+        :class:`Daemon` expects the caller to define a *pidfile*.  Otherwise
+        the *pidfile* will default to ``None`` and all deamonisation will
+        be suppressed.  Any attempts to call methods without a *pidfile*
+        will raise an exception.
 
         **Kwargs:**
+            pidfile (str): Path to the PID file.  Default to ``None``.
+
             term_parent (boolean): Attempt to terminate the parent to
             enforce true separation between parent and child processes.
             Useful when running under test scenarios as :mod:`unittest2`
@@ -90,7 +94,9 @@ class Daemon(object):
         self.pid = None
         self.pidfs = None
 
-        self._validate()
+        # Only validate settings if a pidfile was specified.
+        if self.pidfile is not None:
+            self._validate()
 
     @property
     def pidfile(self):
@@ -151,8 +157,14 @@ class Daemon(object):
                 ``True`` -- success
                 ``False`` -- failure
 
+        **Raises:**
+            DaemonError
+
         """
         start_status = False
+
+        if self.pidfile is None:
+            raise DaemonError('PID file has not been defined')
 
         self._debug('checking daemon status with PID: "%s"' % self.pid)
         if self.pid is not None:
@@ -257,10 +269,9 @@ class Daemon(object):
             self._debug('stopping daemon process with PID: %s' % self.pid)
  
             try:
-                while 1:
-                    os.kill(int(self.pid), signal.SIGTERM)
-                    time.sleep(0.1)
+                os.kill(int(self.pid), signal.SIGTERM)
             except OSError as err:
+                log.warn('err: %s' % str(err))
                 log.warn('PID "%s" does not exist' % self.pid)
                 if err.errno == 3:
                     log.warn('Removing PID file "%s"' % self.pidfile)
@@ -312,3 +323,21 @@ class Daemon(object):
         """
         name = "%s.%s" % (type(self).__module__, type(self).__name__)
         log.debug('%s - %s' % (name, log_msg))
+
+
+class DaemonError(Exception):
+    """Standard exception for a Daemon error.
+
+    Very simplistic at the moment in that it only caters for situations
+    where functionality is requested without a valid PID file specified.
+
+    .. attribute:: msg
+
+        An explanation of the error.
+
+    """
+    def __init__(self, value):
+        self.msg = value
+
+    def __str__(self):
+        return repr(self.msg)
