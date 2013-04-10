@@ -27,10 +27,12 @@ class TestDaemon(unittest2.TestCase):
             itt.utils.Daemon(self._pid_file)
 
     def test_init_with_no_args(self):
-        """Test invalid initialisation of the generic Daemon.
+        """Test exception generation if no PID file is specified.
         """
-        with self.assertRaises(TypeError):
-            DummyDaemon()
+        daemon = DummyDaemon()
+
+        with self.assertRaises(itt.utils.DaemonError):
+            daemon.start()
 
     def test_init_with_unwritable_pid_file(self):
         """Test initialisation with unwritable PID file.
