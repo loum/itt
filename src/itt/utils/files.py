@@ -78,7 +78,7 @@ class RenamedTemporaryFile(object):
 
     Example usage as follows ...
 
-    Say I want to write to the persistent file, "banana":
+    Say I want to write to the persistent file, ``banana``:
 
     >>> with RenamedTemporaryFile("banana") as f:
     >>>     f.write("stuff")
@@ -92,8 +92,8 @@ class RenamedTemporaryFile(object):
             final_path (str): The resultant filename.
 
         **Kwargs:**
-            **kwargs: same as the kwargs for 
-                      :mod:`tempfile.NamedTemporaryFile`
+            kwargs: same as the kwargs for
+            :mod:`tempfile.NamedTemporaryFile`
 
         """
         tmpfile_dir = kwargs.pop('dir', None)
