@@ -73,15 +73,17 @@ class RenamedTemporaryFile(object):
 
     .. note::
 
-        Although built on the tempfile.NamesTemporyFile module, filename
-        has been set to persist after file handle closure.
+        Although built on the :mod:`tempfile.NamesTemporyFile` module,
+        the filename has been set to persist after file handle closure.
 
     Example usage as follows ...
 
     Say I want to write to the persistent file, ``banana``:
 
+    >>> from itt.utils.files import RenamedTemporaryFile
     >>> with RenamedTemporaryFile("banana") as f:
     >>>     f.write("stuff")
+    ...
 
     """
 

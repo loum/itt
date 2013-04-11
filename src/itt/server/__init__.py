@@ -18,6 +18,7 @@ from abc import ABCMeta, abstractmethod
 
 import itt.utils
 
+
 class Server(itt.utils.Daemon):
     """IP Test Tool base server class.
 

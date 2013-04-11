@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import argparse
-import os.path
 
 import itt
 
@@ -9,7 +8,7 @@ import itt
 #      - sane config defaults
 #      - support for restart and status
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description='ittserverd')
     parser.add_argument('server_type',
                         choices=['ftp', 'tftp', 'http'],
@@ -19,13 +18,15 @@ if __name__ == "__main__":
                         help='The action to be performed on the server')
     args = parser.parse_args()
 
-    # Construct the PID file name based on server type.
-    this_script = os.path.basename(__file__)
-    pid_file = '/tmp/%s.%s.pid' % (this_script, args.server_type)
+    # Select the correct server type with appropriate kwargs.
+    server = itt.Config(server=args.server_type)
+    daemon = getattr(*server.lookup)(**server.kwargs)
 
-    daemon = itt.FtpServer(root='/tmp', pidfile=pid_file)
-
+    # Take appropriate action.
     if args.action == "start":
         daemon.start()
     elif args.action == "stop":
         daemon.stop()
+
+if __name__ == "__main__":
+    main()

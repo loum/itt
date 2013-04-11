@@ -6,12 +6,11 @@
 :mod:`itt.utils` --- ITT Generic Utils
 ======================================
 
-Contents:
-
-.. toctree::
-   :maxdepth: 2
-
 .. automodule:: itt.utils
+    :synopsis: Generic library of day-to-day utilities
+
+
+This module defines the following items:
 
 :mod:`itt.utils.files`
 ----------------------

@@ -34,6 +34,10 @@ class FtpServer(itt.Server):
 
     Alternatively, "kill -s SIGTERM <pid>" will also do the trick.
 
+    .. note::
+
+        Refer to :class:`itt.server.Server` for the attributes list.
+
     """
     def __init__(self,
                  root,

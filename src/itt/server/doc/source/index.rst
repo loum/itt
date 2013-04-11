@@ -40,6 +40,12 @@ Classes
 .. autoclass:: itt.HttpServer
     :members:
 
+:class:`Config`
+^^^^^^^^^^^^^^^
+
+.. autoclass:: itt.Config
+    :members:
+
 Indices and tables
 ==================
 
