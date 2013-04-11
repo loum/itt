@@ -54,13 +54,14 @@ class Server(itt.utils.Daemon):
 
         The intention behind the `server` attribute is to provide a common
         access point to functionality provided via an alternate server-type
-        module.  For example, somewhere in the IP Test Tool :class:`TftpServer`
-        class is the following call:
+        module.  For example, somewhere in the IP Test Tool
+        :class:`TftpServer` class is the following call:
 
             self.server = tftpy.TftpServer(self.root)
 
         This give us access to the nice features of the :mod:`tftp` module
-        that we can then use in our own :meth:`start` and :meth:`stop` methods.
+        that we can then use in our own :meth:`start` and :meth:`stop`
+        methods.
 
     .. attribute:: bind
 
@@ -70,13 +71,21 @@ class Server(itt.utils.Daemon):
 
         The PID of the server process.  A value of ``None`` indicates an
         inactive server.
+
+    .. attribute:: pidfile (string)
+
+        The name of the PID file.  Only required if intending to run as
+        a daemon.  Defaults to ``None`` which suppresses daemonisation
+        functionality.
+
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self):
+    def __init__(self, pidfile=None):
         """Server class initialisation.
         """
-        super(Server, self).__init__()
+        super(Server, self).__init__(pidfile)
+
         self._port = None
         self._root = None
         self._proc = None
@@ -84,6 +93,7 @@ class Server(itt.utils.Daemon):
         self._server = None
         self._bind = 'localhost'
         self._pid = None
+        self._pidfile = pidfile
 
     @property
     def port(self):
@@ -138,6 +148,14 @@ class Server(itt.utils.Daemon):
     @abstractmethod
     def server(self, value):
         self._server = value
+
+    @property
+    def pidfile(self):
+        return self._pidfile
+
+    @pidfile.setter
+    def pidfile(self, value):
+        self._pidfile = value
 
     @abstractmethod
     def start(self):

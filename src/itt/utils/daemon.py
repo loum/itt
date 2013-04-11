@@ -26,10 +26,10 @@ class Daemon(object):
     """A generic daemon class.
     
     :class:`Daemon` will prepare the daemon environment for you but
-    expects that you give it an entry point (:method:`run`) to the
+    expects that you give it an entry point (:meth:`run`) to the
     functional component of your process.
 
-    The following example shows a trivial class that defines a :method:`run`
+    The following example shows a trivial class that defines a :meth:`run`
     method ...
 
     >>> import itt.utils
@@ -46,15 +46,15 @@ class Daemon(object):
     To stop:
     >>> d.stop()
 
-    The :method:`start` method manages the daemonisation of the environment
-    and makes the actual call to your own instance of the :method:`run`
+    The :meth:`start` method manages the daemonisation of the environment
+    and makes the actual call to your own instance of the :meth:`run`
     method.
 
     """
     __metaclass__ = ABCMeta
 
     def __init__(self,
-                 pidfile=None,
+                 pidfile,
                  stdin='/dev/null',
                  stdout='/dev/null',
                  stderr='/dev/null',
@@ -64,18 +64,19 @@ class Daemon(object):
         :class:`Daemon` is built on top the the :mod:`abc` Abstract Base
         Class module and is defined as *abstract*.  It is not intended to
         be instantiated directly.  Instead, it forces generalisations
-        to define their own :method:`run` method.  :method:`run`
+        to define their own :meth:`run` method.  :meth:`run`
         will be called after the process has been daemonised by
-        :method:`start` or :method:`restart`.
+        :meth:`start` or :meth:`restart`.
 
         :class:`Daemon` expects the caller to define a *pidfile*.  Otherwise
         the *pidfile* will default to ``None`` and all deamonisation will
         be suppressed.  Any attempts to call methods without a *pidfile*
         will raise an exception.
 
-        **Kwargs:**
-            pidfile (str): Path to the PID file.  Default to ``None``.
+        **Args:**
+            pidfile (str): Path to the PID file.
 
+        **Kwargs:**
             term_parent (boolean): Attempt to terminate the parent to
             enforce true separation between parent and child processes.
             Useful when running under test scenarios as :mod:`unittest2`
@@ -147,7 +148,7 @@ class Daemon(object):
 
             Daemon will only start if PID file does not exist.
 
-        The :method:`start` method checks for an existing PID before
+        The :meth:`start` method checks for an existing PID before
         preparing the daemon environment.  Finally, it will initiate
         the daemon process run sequence.
 
@@ -293,12 +294,12 @@ class Daemon(object):
     def restart(self):
         """Restart the daemon
 
-        No real magic here -- simply calls the :method:`stop` and
-        :method:`start` method sequence (in that order)
+        No real magic here -- simply calls the :meth:`stop` and
+        :meth:`start` method sequence (in that order)
 
-        .. TODO::
+        .. note::
 
-            Need better tests around this process.
+            TODO - Need better tests around this process.
 
         """
         self.info('attempting daemon restart')

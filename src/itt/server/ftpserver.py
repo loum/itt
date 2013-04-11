@@ -16,8 +16,8 @@ class FtpServer(itt.Server):
     """Simple FTP server built on top of the :class:`pyftpdlib.ftpserver`
     class.
 
-    Example usage of the default settings as follows using the direcotry
-    '/tmp' as the FTP server's root:
+    Example usage of the default settings as follows using the directory
+    ``/tmp`` as the FTP server's root:
 
     >>> from itt.server.ftpserver import FtpServer
     >>> server = FtpServer(root='/tmp')
@@ -32,16 +32,24 @@ class FtpServer(itt.Server):
 
     >>> server.stop()
 
-    Alternatively, Ctrl-C will also do the trick.
+    Alternatively, "kill -s SIGTERM <pid>" will also do the trick.
 
     """
     def __init__(self,
                  root,
-                 port=2121):
+                 port=2121,
+                 pidfile=None):
         """FtpServer initialiser.
 
         Creates a FTP server that listens on port `port` and serves/writes
         to directory root specified by `root`.
+
+        Specify a writable *pidfile* location to invoke the FTP service
+        as a daemon.
+
+        .. warning::
+
+            Don't try to run as a daemon with the :mod:`unittest` module.
 
         **Args:**
             root (str): Directory local to the server that will serve/write
@@ -51,14 +59,18 @@ class FtpServer(itt.Server):
             port (int): Port that the server process listens on
             (default=2121)
 
+            pidfile (string): Name of the PID file.  Only required if
+            intending to run the module as a daemon.
+
         .. warning::
 
-            TODO: currently, the anonymouse user has write permissions to
+            TODO -- currently, the anonymous user has write permissions to
             the the directory.  We probably want to create a valid user
-            and tailor permissions around require usage.
+            and tailor permissions around required usage.
 
         """
-        super(FtpServer, self).__init__()
+        super(itt.FtpServer, self).__init__(pidfile=pidfile)
+
         self.root = root
         self.port = port
         self.exit = multiprocessing.Event()
@@ -82,7 +94,32 @@ class FtpServer(itt.Server):
     def start(self):
         """Wrapper around the FTP server start process.
 
-        Call the :meth:`start` method to start the FTP server.o
+        Invokes the FTP server one in two ways:
+
+        * As a daemon
+        * Inline using the :mod:`multiprocessing.Event` module
+
+        Typically, the daemon instance will be used in a production
+        environment and the inline instance for testing or via the
+        Python interpreter.
+
+        .. note::
+
+            :mod:`unittest` barfs if the method under test exits :-(
+
+        The distinction between daemon or inline is made during object
+        initial.  If you specify a *pidfile* then it will assume you want
+        to run as a daemon.
+
+        """
+        if self.pidfile is not None:
+            super(itt.FtpServer, self).start()
+        else:
+            self._start_inline()
+
+    def _start_inline(self):
+        """The inline variant of the :meth:`start` method.
+
         """
         log_msg = 'FTP server process'
 
@@ -101,20 +138,20 @@ class FtpServer(itt.Server):
     def _start_server(self, event):
         """Responsible for the actual FTP server start.
 
-        Invokes the :method:`pyftpdlib.ftpserver.serve_forever` method and
+        Invokes the :meth:`pyftpdlib.ftpserver.serve_forever` method and
         listens for incoming connections.
 
         .. warning::
 
             Should not be called directly.  You probably want to call the
-            :method:`FtpServer.start` method instead.
+            :meth:`FtpServer.start` method instead.
 
         **Args:**
             event (:mod:`multiprocessing.Event`): Internal semaphore that
             terminates the FTP server once it is set.
 
         """
-        signal.signal(signal.SIGINT, self.signal_handler)
+        signal.signal(signal.SIGTERM, self._signal_handler)
 
         server = ftpserver.FTPServer(self._address, self._ftp_handler)
         while not event.is_set():
@@ -127,6 +164,14 @@ class FtpServer(itt.Server):
         server.close_all()
 
     def stop(self):
+        """Wrapper around the FTP server stop process.
+        """
+        if self.pidfile is not None:
+            super(itt.FtpServer, self).stop()
+        else:
+            self._set_exit_handler()
+
+    def _set_exit_handler(self):
         """Responsible for the actual FTP server stop.
         """
         log_msg = 'FTP server process'
@@ -136,8 +181,9 @@ class FtpServer(itt.Server):
         # Flag the server as not operational.
         self.pid = None
 
-    def signal_handler(self, signal, frame):
-        log.info('Ctrl-C intercepted ...')
-        self.stop()
+    def _signal_handler(self, signal, frame):
+        log.info('Termination signal intercepted ...')
+        self._set_exit_handler()
 
-    def run(self): pass
+    def run(self):
+        self._start_server(self.exit)

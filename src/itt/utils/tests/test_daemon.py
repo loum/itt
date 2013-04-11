@@ -26,11 +26,16 @@ class TestDaemon(unittest2.TestCase):
         with self.assertRaises(TypeError):
             itt.utils.Daemon(self._pid_file)
 
-    def test_init_with_no_args(self):
+    def test_init_with_no_arguments(self):
+        """Test initialisation with no arguments.
+        """
+        with self.assertRaises(TypeError):
+            DummyDaemon()
+
+    def test_init_with_pidfile_none(self):
         """Test exception generation if no PID file is specified.
         """
-        daemon = DummyDaemon()
-
+        daemon = DummyDaemon(pidfile=None)
         with self.assertRaises(itt.utils.DaemonError):
             daemon.start()
 

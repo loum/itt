@@ -58,7 +58,7 @@ class TestFtpServer(unittest2.TestCase):
         server.start()
         self.port_checker('', server.port)
         pid = server.proc.pid
-        os.kill(pid, signal.SIGINT)
+        os.kill(pid, signal.SIGTERM)
 
     def port_checker(self, host, port):
         with self.assertRaises(socket.error) as cm:
