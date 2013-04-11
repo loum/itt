@@ -41,11 +41,15 @@ class TftpServer(itt.Server):
     def __init__(self,
                  root,
                  port=6969,
-                 daemon=True):
+                 pidfile=None):
         """TftpServer initialiser.
 
         Creates a TFTP server that listens on port `port` and serves/writes
         to directory root specified by `root`.
+
+        .. warning::
+
+            Don't try to run as a daemon with the :mod:`unittest` module.
 
         **Args:**
             root (str): Directory local to the server that will serve/write
@@ -55,13 +59,14 @@ class TftpServer(itt.Server):
             port (int): Port that the server process listens on
             (default=6969)
 
-            daemon (bool): Defines whether server process is launched as a
-            daemon (default=True)
+            pidfile (string): Name of the PID file.  Only required if
+            intending to run the module as a daemon.
+
         """
-        super(TftpServer, self).__init__()
+        super(TftpServer, self).__init__(pidfile=pidfile)
+
         self.port = port
         self.root = root
-        self.daemon = daemon
         self._server = None
 
     def __enter__(self):
@@ -85,9 +90,6 @@ class TftpServer(itt.Server):
         """Wrapper around the server start process.  In ways, the start()
         method simulates the class context manager's __enter__ method.
 
-        Before start up, checks to see if the TFTP server process should
-        be invoked as a daemon or serially on the command line.
-
         .. note::
 
             TODO - get rid of sleep around the port bind process  -- yuk
@@ -101,17 +103,13 @@ class TftpServer(itt.Server):
         log.info('%s - serving root "%s" on port:%d' % (log_msg,
                                                         self.root,
                                                         self.port))
-        if self.daemon:
-            self.proc = multiprocessing.Process(target=self._start_server)
-            self.proc.start()
-            time.sleep(0.2)         # can do better -- check TODO.
+        self.proc = multiprocessing.Process(target=self._start_server)
+        self.proc.start()
+        time.sleep(0.2)         # can do better -- check TODO.
 
-            # Flag the server as being operational.
-            if self.proc.is_alive():
-                self.pid = self.proc.pid
-
-        else:
-            self._start_server()
+        # Flag the server as being operational.
+        if self.proc.is_alive():
+            self.pid = self.proc.pid
 
     def _start_server(self):
         """Responsible for the actual TFTP server start.
