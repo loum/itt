@@ -4,15 +4,14 @@ import argparse
 
 import itt
 
-# TODO - support for HTTP and TFTP
-#      - sane config defaults
-#      - support for restart and status
+# TODO - support for HTTP and
+#      - support for status
 
 def main():
     parser = argparse.ArgumentParser(description='ittserverd')
     parser.add_argument('server_type',
                         choices=['ftp', 'tftp', 'http'],
-                        help='The type of server to launch')
+                        help='The type of server to control')
     parser.add_argument('action',
                         choices=['start', 'stop', 'restart', 'status'],
                         help='The action to be performed on the server')
@@ -27,6 +26,8 @@ def main():
         daemon.start()
     elif args.action == "stop":
         daemon.stop()
+    elif args.action == "restart":
+        daemon.restart()
 
 if __name__ == "__main__":
     main()

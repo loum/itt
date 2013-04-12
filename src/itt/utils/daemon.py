@@ -15,6 +15,7 @@ import sys
 import os
 import atexit
 import signal
+import time
 from abc import ABCMeta, abstractmethod
 
 from itt.utils.log import log, class_logging
@@ -289,6 +290,9 @@ class Daemon(object):
             log.warn('PID file exists with invalid value: "%s"' %
                      str(self.pid))
 
+        if stop_status:
+            self.pid = None
+
         return stop_status
  
     def restart(self):
@@ -302,10 +306,16 @@ class Daemon(object):
             TODO - Need better tests around this process.
 
         """
-        self.info('attempting daemon restart')
-        if self.stop():
-            log._debug('stop OK -- trying start ...')
-            self.start()
+        log_msg = '%s daemon --' % type(self).__name__
+        log.info('%s attempting restart ...' % log_msg)
+        log.info('%s stopping ...' % log_msg)
+        self.stop()
+
+        # Allow some time between restarts.
+        time.sleep(2)
+
+        log.info('%s attempting restart ...' % log_msg)
+        self.start()
 
     def _delpid(self):
         """Simple wrapper method around file deletion.

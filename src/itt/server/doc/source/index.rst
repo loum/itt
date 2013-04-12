@@ -6,45 +6,44 @@
 :mod:`itt.server` --- IP Test Tool Servers
 ==========================================
 
-Contents:
+The :mod:`itt.server` module aims to provide a consistent interface
+across all ITT server variants.
 
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: itt.server
-
-Classes
+Modules
 -------
 
-:class:`Server`
-^^^^^^^^^^^^^^^
-
-.. autoclass:: Server
+:mod:`itt.server`
+^^^^^^^^^^^^^^^^^
+.. automodule:: itt.server
     :members:
+    :show-inheritance:
 
-:class:`TftpServer`
-^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: itt.TftpServer
+:mod:`itt.server.tftpserver`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.server.tftpserver
     :members:
+    :show-inheritance:
 
-:class:`FtpServer`
-^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: itt.FtpServer
+:mod:`itt.server.ftpserver`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.server.ftpserver
     :members:
+    :show-inheritance:
 
-:class:`HttpServer`
-^^^^^^^^^^^^^^^^^^^
-
-.. autoclass:: itt.HttpServer
+:mod:`itt.server.httpserver`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.server.httpserver
     :members:
+    :show-inheritance:
 
-:class:`Config`
-^^^^^^^^^^^^^^^
-
-.. autoclass:: itt.Config
+:mod:`itt.server.config`
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: itt.server.config
     :members:
+    :show-inheritance:
 
 Indices and tables
 ==================
@@ -52,4 +51,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

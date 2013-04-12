@@ -69,7 +69,11 @@ class Config(object):
 [ftp]
 root = /tmp
 port = 2121
-pidfile = /tmp/ittserverd.ftp.out"""
+pidfile = /tmp/ittserverd.ftp.pid
+[tftp]
+root = /tmp
+port = 6969
+pidfile = /tmp/ittserverd.tftp.pid"""
 
     @property
     def server(self):

@@ -2,9 +2,7 @@ __all__ = [
     "FtpServer",
 ]
 
-import multiprocessing
 from pyftpdlib import ftpserver
-import time
 import signal
 
 import itt
@@ -77,7 +75,6 @@ class FtpServer(itt.Server):
 
         self.root = root
         self.port = port
-        self.exit = multiprocessing.Event()
 
         self._authorizer = ftpserver.DummyAuthorizer()
         self._authorizer.add_anonymous(self.root, perm='elrw')
@@ -86,58 +83,6 @@ class FtpServer(itt.Server):
         self._ftp_handler.authorizer = self._authorizer
 
         self._address = ('127.0.0.1', self.port)
-
-    @property
-    def exit(self):
-        return self._exit
-
-    @exit.setter
-    def exit(self, value):
-        self._exit = value
-
-    def start(self):
-        """Wrapper around the FTP server start process.
-
-        Invokes the FTP server one in two ways:
-
-        * As a daemon
-        * Inline using the :mod:`multiprocessing.Event` module
-
-        Typically, the daemon instance will be used in a production
-        environment and the inline instance for testing or via the
-        Python interpreter.
-
-        .. note::
-
-            :mod:`unittest` barfs if the method under test exits :-(
-
-        The distinction between daemon or inline is made during object
-        initial.  If you specify a *pidfile* then it will assume you want
-        to run as a daemon.
-
-        """
-        if self.pidfile is not None:
-            super(itt.FtpServer, self).start()
-        else:
-            self._start_inline()
-
-    def _start_inline(self):
-        """The inline variant of the :meth:`start` method.
-
-        """
-        log_msg = 'FTP server process'
-
-        # Reset the internal event flag
-        log.info('%s - starting ...' % log_msg)
-        self.proc = multiprocessing.Process(target=self._start_server,
-                                            args=(self.exit,))
-        self.proc.start()
-        log.info('%s - started with PID %d' % (log_msg, self.proc.pid))
-        time.sleep(0.01)         # can do better -- check TODO.
-
-        # Flag the server as being operational.
-        if self.proc.is_alive():
-            self.pid = self.proc.pid
 
     def _start_server(self, event):
         """Responsible for the actual FTP server start.
@@ -157,15 +102,14 @@ class FtpServer(itt.Server):
         """
         signal.signal(signal.SIGTERM, self._signal_handler)
 
-        server = ftpserver.FTPServer(self._address, self._ftp_handler)
+        self.server = ftpserver.FTPServer(self._address, self._ftp_handler)
         while not event.is_set():
-            server.serve_forever(timeout=0.1, count=1)
+            self.server.serve_forever(timeout=0.1, count=1)
 
         event.clear()
 
-        log_msg = 'FTP server process'
-        log.info('%s - stopping server ...' % log_msg)
-        server.close_all()
+        log.info('%s - stopping server ...' % type(self).__name__)
+        self.server.close_all()
 
     def stop(self):
         """Wrapper around the FTP server stop process.
@@ -178,16 +122,12 @@ class FtpServer(itt.Server):
     def _set_exit_handler(self):
         """Responsible for the actual FTP server stop.
         """
-        log_msg = 'FTP server process'
-        log.info('%s - setting terminate flag ...' % log_msg)
-        self.exit.set()
+        log.info('%s - setting terminate flag ...' % type(self).__name__)
+        self.exit_event.set()
 
         # Flag the server as not operational.
         self.pid = None
 
     def _signal_handler(self, signal, frame):
-        log.info('Termination signal intercepted ...')
+        log.info('%s SIGTERM intercepted' % type(self).__name__)
         self._set_exit_handler()
-
-    def run(self):
-        self._start_server(self.exit)

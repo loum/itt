@@ -2,7 +2,8 @@ __all__ = [
     "TftpServer",
 ]
 
-import multiprocessing
+import sys
+import signal
 import tftpy
 import time
 
@@ -65,9 +66,8 @@ class TftpServer(itt.Server):
         """
         super(TftpServer, self).__init__(pidfile=pidfile)
 
-        self.port = port
+        self.port = int(port)
         self.root = root
-        self._server = None
 
     def __enter__(self):
         self.start()
@@ -78,40 +78,7 @@ class TftpServer(itt.Server):
         self.stop()
         self.server = None
 
-    @property
-    def server(self):
-        return self._server
-
-    @server.setter
-    def server(self, value):
-        self._server = value
-
-    def start(self):
-        """Wrapper around the server start process.  In ways, the start()
-        method simulates the class context manager's __enter__ method.
-
-        .. note::
-
-            TODO - get rid of sleep around the port bind process  -- yuk
-
-        **Returns**:
-            (bool): value representing process' active state.
-
-        """
-        log_msg = 'TFTP server process'
-        log.info('%s - starting ...' % log_msg)
-        log.info('%s - serving root "%s" on port:%d' % (log_msg,
-                                                        self.root,
-                                                        self.port))
-        self.proc = multiprocessing.Process(target=self._start_server)
-        self.proc.start()
-        time.sleep(0.2)         # can do better -- check TODO.
-
-        # Flag the server as being operational.
-        if self.proc.is_alive():
-            self.pid = self.proc.pid
-
-    def _start_server(self):
+    def _start_server(self, event):
         """Responsible for the actual TFTP server start.
 
         Invokes the :meth:`tftpy.listen` method which starts the TFTP
@@ -122,7 +89,13 @@ class TftpServer(itt.Server):
             Should not be called directly.  You probably want to call the
             :meth:`TftpServer.start` method instead.
 
+        **Args:**
+            event (:mod:`multiprocessing.Event`): Internal semaphore that
+            terminates the FTP server once it is set.
+
         """
+        signal.signal(signal.SIGTERM, self._signal_handler)
+
         self.server = tftpy.TftpServer(self.root)
         try:
             self.server.listen(listenport=self.port)
@@ -133,21 +106,28 @@ class TftpServer(itt.Server):
         """Responsible for the actual TFTP server stop (albeit in an
         un-graceful manner).
 
-        Really only makes sense when used in daemon context as it will
-        call the :class:`multiprocessing.Process` `terminate` method.
-
         .. note::
 
             If the TFTP server is used in serial context on the command
             line, Ctrl-C will do the trick.
 
-        .. note::
-
             TODO - It would be really nice if shutdown could be managed
             gracefully ...
 
         """
-        log_msg = 'TFTP server process'
+        stop_status = False
+
+        if self.pidfile is not None:
+            super(itt.TftpServer, self).stop()
+        else:
+            stop_status = self._exit_inline()
+
+        return stop_status
+
+    def _exit_inline(self):
+        """
+        """
+        log_msg = type(self).__name__
         if self.proc is not None:
             log.info('%s - terminating ...' % log_msg)
             self.proc.terminate()
@@ -165,4 +145,6 @@ class TftpServer(itt.Server):
 
         return self.proc.is_alive()
 
-    def run(self): pass
+    def _signal_handler(self, signal, frame):
+        log.info('%s SIGTERM intercepted' % type(self).__name__)
+        sys.exit(0)
