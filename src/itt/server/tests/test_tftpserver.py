@@ -19,7 +19,7 @@ class TestTftpServer(unittest2.TestCase):
         self.test_dir = os.path.dirname(self.temp_fs.name)
 
         # Default port.
-        tftp = itt.TftpServer(root='/tmp')
+        tftp = itt.TftpServer(root=self.test_dir)
         expected = 6969
         received = tftp.port
         msg = ('Default TFTP port should be 6969 - received %s' %
@@ -29,7 +29,8 @@ class TestTftpServer(unittest2.TestCase):
 
         # Overriden port.
         received = port_to_use = 6970
-        tftp = itt.TftpServer(root='/tmp', port=port_to_use)
+        tftp = itt.TftpServer(root=self.test_dir,
+                              port=port_to_use)
         expected = tftp.port
         msg = ('Overriden port value should be 6970 - received %s' %
                str(received))
@@ -42,13 +43,15 @@ class TestTftpServer(unittest2.TestCase):
         server = itt.TftpServer(root=self.test_dir)
 
         # Check that the server was started.
-        server.start()
+        msg = 'Inline HTTP server start should return True'
+        self.assertTrue(server.start(), msg)
         msg = 'TFTP server process should have a valid PID'
         self.assertNotEqual(None, server.pid, msg)
 
         # Check that the server was shutdown.
-        server.stop()
-        msg = 'TFTP server PID should not None'
+        msg = 'HTTP server process stop should return True'
+        self.assertTrue(server.stop(), msg)
+        msg = 'TFTP server PID should be None'
         self.assertEqual(None, server.pid, msg)
 
     def tearDown(self):

@@ -7,7 +7,7 @@ from itt.utils.files import dummy_filesystem
 
 
 class DummyDaemon(itt.utils.Daemon):
-    def run(self):
+    def _start_server(self, event):
         while True:
             time.sleep(1)
 
@@ -37,7 +37,7 @@ class TestDaemon(unittest2.TestCase):
         """
         daemon = DummyDaemon(pidfile=None)
         with self.assertRaises(itt.utils.DaemonError):
-            daemon.start()
+            daemon._start_daemon()
 
     def test_init_with_unwritable_pid_file(self):
         """Test initialisation with unwritable PID file.
