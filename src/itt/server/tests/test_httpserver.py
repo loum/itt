@@ -1,6 +1,4 @@
 import unittest2
-import multiprocessing
-import time
 
 import itt
 
@@ -11,29 +9,46 @@ def setUpModule():
 class TestHttpServer(unittest2.TestCase):
 
     def test_init(self):
-        """Do nothing for now.
+        """Test initialisation of the HttpServer.
         """
-        return
+        with self.assertRaises(TypeError):
+            itt.HttpServer()
+
+        # Default port.
+        http = itt.HttpServer(root='/tmp')
+        expected = 8000
+        received = http.port
+        msg = ('Default HTTP server port should be: %s - received %s' %
+                (str(expected), str(received)))
+        self.assertEqual(received, expected, msg)
+        http = None
+
+        # Overridden port.
+        received = port_to_use = 80011
+        http = itt.HttpServer(root='/tmp', port=port_to_use)
+        expected = http.port
+        msg = ('Overridden HTTP server port should be: %s - received %s' %
+               (str(expected), str(received)))
+        self.assertEqual(received, expected, msg)
+        http = None
 
     def test_server_start(self):
         """Test HTTP server starts without errors.
         """
-        global _proc
+        server = itt.HttpServer(root='/tmp',
+                                request_handler=itt.HttpRequestHandler)
+        msg = 'Inline HTTP server start should return True'
+        self.assertTrue(server.start(), msg)
 
-        server = itt.HttpServer()
+        # We should have a valid PID.
+        msg = 'HTTP server process should have a valid PID'
+        self.assertNotEqual(None, server.pid, msg)
 
-        _proc = multiprocessing.Process(target=server.start)
-        _proc.daemon = True
-        _proc.start()
+        import time
+        time.sleep(0.5)
 
-        print('Started HTTP server')
-        time.sleep(0.25)
-
-    def test_server_stop(self):
-        """Test HTTP server stops without errors.
-        """
-        global _proc
-        print _proc
-        _proc.terminate()
-
-        print('Stopped HTTP server')
+        # Check that the server was shutdown.
+        msg = 'HTTP server process stop should return True'
+        self.assertTrue(server.stop(), msg)
+        msg = 'HTTP server PID should be None'
+        self.assertEqual(None, server.pid, msg)

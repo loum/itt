@@ -17,8 +17,8 @@ class FtpServer(itt.Server):
     Example usage of the default settings as follows using the directory
     ``/tmp`` as the FTP server's root:
 
-    >>> from itt.server.ftpserver import FtpServer
-    >>> server = FtpServer(root='/tmp')
+    >>> import itt
+    >>> server = itt.FtpServer(root='/tmp')
     >>> server.start()
     ...
 
@@ -44,7 +44,7 @@ class FtpServer(itt.Server):
         """FtpServer initialiser.
 
         Creates a FTP server that listens on port `port` and serves/writes
-        to directory root specified by `root`.
+        to directory *root*.
 
         Specify a writable *pidfile* location to invoke the FTP service
         as a daemon.
@@ -100,34 +100,22 @@ class FtpServer(itt.Server):
             terminates the FTP server once it is set.
 
         """
-        signal.signal(signal.SIGTERM, self._signal_handler)
+        signal.signal(signal.SIGTERM, self._exit_handler)
 
         self.server = ftpserver.FTPServer(self._address, self._ftp_handler)
         while not event.is_set():
             self.server.serve_forever(timeout=0.1, count=1)
 
-        event.clear()
-
+        # Flag the server as not operational.
         log.info('%s - stopping server ...' % type(self).__name__)
         self.server.close_all()
-
-    def stop(self):
-        """Wrapper around the FTP server stop process.
-        """
-        if self.pidfile is not None:
-            super(itt.FtpServer, self).stop()
-        else:
-            self._set_exit_handler()
-
-    def _set_exit_handler(self):
-        """Responsible for the actual FTP server stop.
-        """
-        log.info('%s - setting terminate flag ...' % type(self).__name__)
-        self.exit_event.set()
+        log.info('%s terminated' % type(self).__name__)
 
         # Flag the server as not operational.
+        event.clear()
         self.pid = None
 
-    def _signal_handler(self, signal, frame):
+    def _exit_handler(self, signal, frame):
         log.info('%s SIGTERM intercepted' % type(self).__name__)
-        self._set_exit_handler()
+        self.exit_event.set()
+        log.debug('%s exit flag set ...' % type(self).__name__)
