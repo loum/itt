@@ -1,4 +1,4 @@
-# Django settings for candc project.
+# Django settings for Control and Command project.
 
 import os
 
@@ -12,7 +12,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 # Set the database name -- sqlite3 context.
-db_name = os.path.join('%s%s' % ('db', os.sep), 'candc.db')
+db_name = os.path.join('%s%s' % ('db', os.sep), 'control.db')
 
 # USER, PASSWORD, HOST and PORT are not used with sqlite3.
 DATABASES = {
@@ -110,7 +110,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'candc.urls'
+ROOT_URLCONF = 'control.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'myapp',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
