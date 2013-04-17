@@ -1,7 +1,7 @@
 PY=/usr/bin/env python
 PYTHONPATH=../..
 LOG_CONF="../utils/conf"
-DBNAME="db/candc.db"
+DBNAME="db/control.db"
 
 #sdist:
 #	$(PY) setup.py sdist
