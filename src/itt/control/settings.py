@@ -6,7 +6,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Lou Markovski', 'lou.markovski@softelsystems.com.au'),
+    #('Lou Markovski', 'lou.markovski@softelsystems.com.au'),
 )
 
 MANAGERS = ADMINS
@@ -23,6 +23,7 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
+        'TEST_NAME': ':memory:',
     }
 }
 
@@ -125,7 +126,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'myapp',
+    'test',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
