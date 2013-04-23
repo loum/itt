@@ -1,12 +1,39 @@
 __all__ = [
+    "data_generator",
+    "is_writable",
     "RenamedTemporaryFile",
     "dummy_filesystem",
-    "is_writable",
 ]
 
 import os.path
+import string
+import random
 import tempfile
 from log import log
+
+def data_generator(size=6, chars=(string.ascii_uppercase +
+                                  string.ascii_lowercase +
+                                  string.digits)):
+    """Random string generator.
+
+    For example, can to use as a password generator:
+
+    >>> from itt.utils.files import data_generator
+    >>> data_generator(8)
+    'KQ1mOpjr'
+
+    **Args:**
+        size (int): The length of the random string (default 6 characters).
+
+        chars (string): A subset of characters that the randomiser sources
+        values from.  The default subset is all upper and lower case
+        characters plus character digits.
+
+    **Returns:**
+        string object of `size` characters long.
+
+    """
+    return ''.join(random.choice(chars) for x in range(size))
 
 def is_writable(path):
     """Handy sugar function to check if the invoking user has write access

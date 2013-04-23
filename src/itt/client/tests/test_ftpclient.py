@@ -3,7 +3,7 @@ import tempfile
 import os.path
 
 import itt
-from utils.files import dummy_filesystem
+from itt.utils.files import dummy_filesystem
 
 class TestFtpClient(unittest2.TestCase):
 
@@ -83,7 +83,6 @@ class TestFtpClient(unittest2.TestCase):
 
         # Check content.
         uploaded_file = os.path.join(self._test_dir, file_to_upload)
-        print('uploaded file')
         with open(uploaded_file) as f:
             content = f.read()
 
