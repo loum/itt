@@ -114,9 +114,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'control.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    'templates',
 )
 
 INSTALLED_APPS = (
@@ -127,10 +126,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'config',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+)
+
+FIXTURE_DIRS = (
+    'fixtures',
 )
 
 # A sample logging configuration. The only tangible logging

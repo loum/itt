@@ -1,7 +1,8 @@
 PY=/usr/bin/env python
 PYTHONPATH=.:../..
 LOG_CONF=../utils/conf
-DBNAME=db/control.db
+DJANGO_INIT=./manage.py syncdb --noinput
+DJANGO_CLEAN=./manage.py flush --noinput
 DJANGO_TEST=./manage.py test
 DJANGO_SETTINGS_MODULE=settings
 TEST=
@@ -36,13 +37,13 @@ docs:
 	sphinx-build -b html ./doc/source ./doc/build
 
 init:
-	$(PY) manage.py syncdb --noinput
+	$(PY) $(DJANGO_INIT)
 
 test: django_test
 
 clean:
 	find . -type f -name "*.pyc" -exec rm {} \;
-	rm -fr $(DBNAME)
+	$(PY) $(DJANGO_CLEAN)
 
 django_test:
 	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
