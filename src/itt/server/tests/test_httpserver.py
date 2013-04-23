@@ -2,9 +2,6 @@ import unittest2
 
 import itt
 
-def setUpModule():
-    global _proc
-    _proc = None
 
 class TestHttpServer(unittest2.TestCase):
 

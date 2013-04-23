@@ -61,11 +61,6 @@ class Server(itt.utils.Daemon):
         a daemon.  Defaults to ``None`` which suppresses daemonisation
         functionality.
 
-#    .. attribute:: exit_event (:class:`multiprocessing.Event`)
-#
-#        Internal semaphore that when set, signals that the server process
-#        is to be terminated.
-
     """
     __metaclass__ = ABCMeta
 
@@ -81,7 +76,6 @@ class Server(itt.utils.Daemon):
         self._bind = 'localhost'
         self._pid = None
         self._pidfile = pidfile
-        #self._exit_event = multiprocessing.Event()
 
     @property
     def port(self):
