@@ -1,2 +1,2 @@
-from test_test import SimpleTest
-from test_test import TestCheckpoint
+from test_node import TestNode
+from test_checkpoint import TestCheckpoint

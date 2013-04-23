@@ -4,6 +4,7 @@ LOG_CONF=../utils/conf
 DBNAME=db/control.db
 DJANGO_TEST=./manage.py test
 DJANGO_SETTINGS_MODULE=settings
+TEST=
 
 # Set up the target test files.
 # I've moved the tests from the "preferred" Django location and into

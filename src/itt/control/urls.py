@@ -1,6 +1,8 @@
 from django.conf.urls.defaults import patterns, include, url
-from test.api import CheckpointResource
+from test.api import (NodeResource,
+                      CheckpointResource)
 
+node_resource = NodeResource()
 checkpoint_resource = CheckpointResource()
 
 # Uncomment the next two lines to enable the admin:
@@ -18,5 +20,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^test/', include(node_resource.urls)),
     url(r'^test/', include(checkpoint_resource.urls)),
 )
