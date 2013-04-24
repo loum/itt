@@ -14,5 +14,15 @@
             "password": "sha1$62eb6$6ca9079e55a2d504095d228e9ebfd578efc640fb", 
             "email": "admin@softelsystems.com.au"
         }
+    },
+    {
+        "pk": 1, 
+        "model": "config.config", 
+        "fields": {
+            "client": true, 
+            "role": "sl", 
+            "server": true, 
+            "standalone": true
+        }
     }
 ]

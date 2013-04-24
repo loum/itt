@@ -8,9 +8,9 @@ class Config(models.Model):
         (SLAVE, 'Slave'),
     )
 
-    standalone = models.NullBooleanField()
-    client = models.NullBooleanField()
-    server = models.NullBooleanField()
+    standalone = models.BooleanField()
+    client = models.BooleanField()
+    server = models.BooleanField()
     role = models.CharField(max_length=2,
                             choices=ROLE_CHOICES,
                             default=SLAVE)
