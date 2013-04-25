@@ -1,0 +1,18 @@
+{% comment %}
+The itt.control.server server_form.html accessible via:
+
+    http://<hostname>:8080/config/insert
+
+{% endcomment %}
+
+<h1>ITT Server insert ...</h1>
+
+<form action="" method="post">
+    <table>
+        {{ form.as_table }}
+    </table>
+    {% csrf_token %}
+    <input type="submit" name="submit" value="Submit" />
+    <input type="reset" value="Reset" />
+    <input type="submit" name='cancel' value="Cancel"><br />
+</form>
