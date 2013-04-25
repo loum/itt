@@ -1,0 +1,26 @@
+{% comment %}
+The itt.control.config index.html accessible via:
+
+    http://<hostname>:8080/server/
+
+    Variables:
+        server_list (itt.control.server.Server): direct reference to the
+        list of itt.control.server.Server objects.
+
+{% endcomment %}
+
+<h1>ITT Server index ...</h1>
+
+{% if server_list %}
+    <ul>
+        {% for server in server_list %}
+            <b>Protocol: </b> {{ server.protocol }}
+            <b>Port: </b> {{ server.port }}
+            <b>Root: </b> {{ server.root }}
+            <b>Name: </b> {{ server.name }}
+            <b>Running: </b> {{ server.active|yesno }}<br />
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<a href="/server/insert/">Create new Server</a>
