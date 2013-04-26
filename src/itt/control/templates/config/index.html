@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% comment %}
+The itt.control.config index.html accessible via:
+
+    http://<hostname>:8080/config/
+
+    Variables:
+        config (itt.control.config.Config): direct reference to the Config
+        object
+
+{% endcomment %}
+
+{% block title %}IP Test Tool Config{% endblock %}
+
+<div id=wrapper>
+
+{% block content %}
+    <h2>ITT Config index ...</h2>
+    <table>
+        <colgroup>
+            <col id="standalone" />
+            <col id="client" />
+            <col id="server" />
+            <col id="instance" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th id="standaloneHead">Is Standalone?</th>
+                <th id="clientHead">Client active?</th>
+                <th id="serverHead">Server active?</th>
+                <th id="instanceHead">Instance role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if config %}
+            <tr>
+                <td>{{ config.standalone }}</td>
+                <td>{{ config.client }}</td>
+                <td>{{ config.server }}</td>
+                <td>{{ config.get_role_display }}</td>
+            </tr>
+            {% else %}
+            <tr />
+            {% endif %}
+        </tbody>
+    </table>
+
+    <a href="/config/update/">Modify Settings?</a>
+</div> {# wrapper #}
+
+{% endblock %} {# content #}

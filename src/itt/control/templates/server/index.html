@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 {% comment %}
 The itt.control.config index.html accessible via:
 
@@ -9,18 +11,45 @@ The itt.control.config index.html accessible via:
 
 {% endcomment %}
 
-<h1>ITT Server index ...</h1>
+{% block title %}IP Test Tool Server{% endblock %}
 
-{% if server_list %}
-    <ul>
+<div id=wrapper>
+{% block content %}
+    <h2>ITT Server index ...</h2>
+
+    {% if server_list %}
+    <table>
+        <colgroup>
+            <col id="name" />
+            <col id="protocol" />
+            <col id="port" />
+            <col id="root" />
+            <col id="running" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th id="nameHead">Name</td>
+                <th id="protocolHead">Protocol</td>
+                <th id="portHead">Port</td>
+                <th id="rootHead">Root</td>
+                <th id="runningHead">Running</td>
+            </tr>
+        </thead>
+        <tbody>
         {% for server in server_list %}
-            <b>Protocol: </b> {{ server.protocol }}
-            <b>Port: </b> {{ server.port }}
-            <b>Root: </b> {{ server.root }}
-            <b>Name: </b> {{ server.name }}
-            <b>Running: </b> {{ server.active|yesno }}<br />
+            <tr>
+                <td>{{ server.name }}</td>
+                <td>{{ server.protocol }}</td>
+                <td>{{ server.port }}</td>
+                <td>{{ server.root }}</td>
+                <td>{{ server.active|yesno }}</td>
+            </tr>
         {% endfor %}
-    </ul>
-{% endif %}
+        </tbody>
+    </table>
+    {% endif %}
 
-<a href="/server/insert/">Create new Server</a>
+    <a href="/server/insert/">Create new Server</a>
+</div> {# wrapper #}
+
+{% endblock %} {# content #}
