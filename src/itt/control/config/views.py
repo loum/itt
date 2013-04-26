@@ -24,7 +24,7 @@ def index(request, config_id=1):
     # Provide a quick view of the current ITT instance settings.
     config = Config.objects.get()
 
-    t = loader.get_template('index.html')
+    t = loader.get_template('config/index.html')
     c = Context({
         'config': config,
     })
@@ -39,7 +39,7 @@ def update(request, config_id=1):
 
     config = Config.objects.get(id=config_id)
 
-    t = loader.get_template('config_form.html')
+    t = loader.get_template('config/config_form.html')
 
     if request.method == 'POST':
         # Check for the Cancel button.
