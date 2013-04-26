@@ -1,5 +1,5 @@
 __all__ = [
-    "Config",
+    "ServerConfig",
     "list",
 ]
 
@@ -23,7 +23,7 @@ def list():
         ...
 
     """
-    c = itt.Config()
+    c = itt.ServerConfig()
     for section_name in c.config.sections():
         print('Section: %s' % section_name)
         print('\tOptions: %s' % c.config.options(section_name))
@@ -32,7 +32,7 @@ def list():
         print
 
 
-class Config(object):
+class ServerConfig(object):
     """Limit the ITT server definitions into one place.
 
     The configuration structure is built on top of :mod:`ConfigParser`
@@ -45,11 +45,11 @@ class Config(object):
         port = 2121
         pidfile = /tmp/ittserverd.ftp.pid
 
-    To access the FTP configuration settings, create an :mod:`itt.Config`
+    To access the FTP configuration settings, create an :mod:`itt.ServerConfig`
     object as follows:
 
         >>> import itt
-        >>> c = itt.Config(server='ftp')
+        >>> c = itt.ServerConfig(server='ftp')
         ...
 
     To slurp all of the section items into a handy dictionary:
@@ -66,7 +66,7 @@ class Config(object):
     An example of how to access the Config items is as follows:
 
     >>> import itt
-    >>> c = itt.Config(server='ftp')
+    >>> c = itt.ServerConfig(server='ftp')
 
     The defined attributes are:
 

@@ -19,7 +19,7 @@ def main():
     args = parser.parse_args()
 
     # Select the correct server type with appropriate kwargs.
-    server = itt.Config(server=args.server_type)
+    server = itt.ServerConfig(server=args.server_type)
     try:
         daemon = getattr(*server.lookup)(**server.kwargs)
     except KeyError:
