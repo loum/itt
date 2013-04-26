@@ -23,9 +23,8 @@ def index(request):
     server_list = Server.objects.all()
 
     t = loader.get_template('server/index.html')
-    c = Context({
-        'server_list': server_list,
-    })
+    c = RequestContext(request,
+                       {'server_list': server_list,})
 
     return HttpResponse(t.render(c))
 

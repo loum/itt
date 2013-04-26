@@ -25,9 +25,8 @@ def index(request, config_id=1):
     config = Config.objects.get()
 
     t = loader.get_template('config/index.html')
-    c = Context({
-        'config': config,
-    })
+    c = RequestContext(request,
+                       {'config': config,})
 
     return HttpResponse(t.render(c))
 
