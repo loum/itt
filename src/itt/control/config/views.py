@@ -1,57 +1,68 @@
 from django.http import (HttpResponse,
                          HttpResponseRedirect)
-from django.template import (Context,
-                             RequestContext,
+from django.template import (RequestContext,
                              loader)
 
+import subprocess
 from config.models import Config
 from config.forms import ConfigForm
+from server.models import Server
 
 def index(request, config_id=1):
-    """Display the current ITT installation settings.
-
-    The ``index.html`` page as as the :mod:`itt.control.config` entry point
-    and is accessible via::
-
-        http://<hostname>:8080/config/
-
-    Every ITT installation requires appropriate settings in order to
-    perform its appropriate function on the network.  As such, the
-    :mod:`itt.control.config` ``index.html`` will be one of the first
-    screens required post-ITT install.
-
-    """
-    # Provide a quick view of the current ITT instance settings.
-    config = Config.objects.get()
-
-    t = loader.get_template('config/index.html')
-    c = RequestContext(request,
-                       {'config': config,})
-
-    return HttpResponse(t.render(c))
-
-def update(request, config_id=1):
     """Present a form that allows the ITT instance configuration settings
     to be modified. 
     """
-    response = None
-
     config = Config.objects.get(id=config_id)
 
-    t = loader.get_template('config/config_form.html')
-
     if request.method == 'POST':
-        # Check for the Cancel button.
-        if 'cancel' not in request.POST:
-            form = ConfigForm(request.POST, instance=config)
-            form.save()
-
-        response = HttpResponseRedirect('/config/')
+        response = _index_post(request, config)
     else:
-        form = ConfigForm(instance=config)
-        c = RequestContext(request,
-                           {'form': form,
-                            'config': config,})
-        response = HttpResponse(t.render(c))
+        response = _index_get(request, config)
 
     return response
+
+def _index_post(request, config):
+    """
+    """
+    # Note: the 'cancel' submit will fall through to the return.
+    # TODO: this is a bit fugly ...
+    try:
+        if request.POST['submit'] == 'Change Settings':
+            form = ConfigForm(request.POST, instance=config)
+            form.save()
+        elif request.POST['submit'] == 'Start default FTP':
+            _server_control('ftp', 'start')
+        elif request.POST['submit'] == 'Stop default FTP':
+            _server_control('ftp', 'stop')
+        elif request.POST['submit'] == 'Start default TFTP':
+            _server_control('tftp', 'start')
+        elif request.POST['submit'] == 'Stop default TFTP':
+            _server_control('tftp', 'stop')
+        elif request.POST['submit'] == 'Start default HTTP':
+            _server_control('http', 'start')
+        elif request.POST['submit'] == 'Stop default HTTP':
+            _server_control('http', 'stop')
+    except KeyError:
+        pass
+
+    return HttpResponseRedirect('/config/')
+
+def _index_get(request, config):
+    """
+    """
+    server_list = Server.objects.all()
+    t = loader.get_template('config/index.html')
+
+    form = ConfigForm(instance=config)
+    c = RequestContext(request,
+                       {'form': form,
+                       'config': config,
+                       'server_list': server_list})
+
+    return HttpResponse(t.render(c))
+
+def _server_control(type, action):
+    """
+    """
+    subprocess.call(['../server/bin/ittserverd.py', type, action],
+                     close_fds=True)
