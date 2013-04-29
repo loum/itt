@@ -56,9 +56,9 @@ The itt.control.config index.html accessible via:
     <input type="reset" value="Reset" />
     <input type="submit" name='cancel' value="Cancel"><br />
 </form>
+<h1>Servers</h1>
 {% if config.server %}
 <form action="" method="post">
-    <h1>Servers</h1>
     <fieldset>
         {% csrf_token %}
         {% for server in server_list %}
