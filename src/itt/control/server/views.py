@@ -1,7 +1,6 @@
 from django.http import (HttpResponse,
                          HttpResponseRedirect)
-from django.template import (Context,
-                             RequestContext,
+from django.template import (RequestContext,
                              loader)
 
 from server.models import Server

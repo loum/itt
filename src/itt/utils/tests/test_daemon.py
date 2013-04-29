@@ -44,20 +44,24 @@ class TestDaemon(unittest2.TestCase):
         """
         # But won't work if run as root :-(.
         unwritable_pid_file = '/pid'
-        with self.assertRaises(IOError):
-            DummyDaemon(pidfile=unwritable_pid_file)
+        daemon = DummyDaemon(pidfile=unwritable_pid_file)
+
+        with self.assertRaisesRegexp(itt.utils.DaemonError,
+                                    'Cannot write to PID file: *'):
+            daemon.start()
 
     def test_start_with_existing_pid_file(self):
         """Test start with existing PID file.
         """
         # Open local instance of a PID file to simulate existing file.
+        # PID file contents are empty.
         temp_fs = dummy_filesystem()
         pid_file = temp_fs.name
 
-        # Set up the daemon.
-        daemon = DummyDaemon(pidfile=pid_file)
-        msg = 'Daemon start status existing PID file should be False'
-        self.assertFalse(daemon.start(), msg)
+        # Attempt to set up the daemon.
+        with self.assertRaisesRegexp(itt.utils.DaemonError,
+                                     'Error reading PID file: *'):
+            DummyDaemon(pidfile=pid_file)
 
         # Clean up.  
         temp_fs.close()
@@ -79,28 +83,7 @@ class TestDaemon(unittest2.TestCase):
         expected = None
         self.assertEqual(received, expected, msg)
 
-        # File handle should be open for writing.
-        msg = 'Initial PID file handle should be open for writing to.'
-        received = daemon.pidfs.mode
-        expected = 'w'
-        self.assertEqual(received, expected, msg)
-
         # TODO: It would be really nice to test the start of the daemon.
-
-    def test_stop_when_pid_file_exits_with_non_integer_value(self):
-        """Test stop around PID file with non-integer value.
-        """
-        # Open local instance of a PID file to simulate empty file.
-        temp_fs = dummy_filesystem()
-        pid_file = temp_fs.name
-
-        # Set up the daemon.
-        daemon = DummyDaemon(pidfile=pid_file)
-        msg = 'Daemon stop status for dodgy PID file should be False'
-        self.assertFalse(daemon.stop(), msg)
-
-        # Clean up.  
-        temp_fs.close()
 
     def test_stop_with_pid_file_missing(self):
         """Test stop around missing PID file.
@@ -116,7 +99,7 @@ class TestDaemon(unittest2.TestCase):
         """Test stop of an non-existent PID file.
         """
         # Open local instance of a PID file to simulate empty file.
-        # This file will be deleted by the sttop() method make it persist
+        # This file will be deleted by the stop() method make it persist
         # on the filesystem so that temporary file doesn't barf.
         temp_fs = dummy_filesystem(content='999999')
         temp_fs.delete = False
@@ -128,8 +111,64 @@ class TestDaemon(unittest2.TestCase):
         self.assertFalse(daemon.stop(), msg)
 
         # Check that the PID file was removed.
-        msg = 'PID file "%s" was not removedi after dodgy PID' % pid_file
+        msg = 'PID file "%s" was not removed after dodgy PID' % pid_file
         self.assertFalse(os.path.exists(pid_file), msg)
+
+    def test_status_running_inline_process(self):
+        """Test status of PID for an active inline process.
+        """
+        # Can only test this with the inline daemon instance.
+        # The daemon variant *should* behave the same way.
+        daemon = DummyDaemon(pidfile=None)
+        daemon.start()
+
+        msg = 'Status check of inline process should return True'
+        received = daemon.status()
+        self.assertTrue(received, msg)
+
+        # Try again to make sure the previous check did not kill process.
+        msg = 'Repeat status check of inline process should return True'
+        received = daemon.status()
+        self.assertTrue(received, msg)
+
+        daemon.stop()
+
+    def test_status_invalid_inline_process(self):
+        """Test status of PID for an inactive inline process.
+        """
+        # Fudge an invalid PID.
+        daemon = DummyDaemon(pidfile=None)
+        daemon.pid = 99999
+
+        with self.assertRaises(OSError):
+            daemon.status()
+
+    def test_status_idle_inline_process(self):
+        """Test status of PID for an iidle inline process.
+        """
+        daemon = DummyDaemon(pidfile=None)
+
+        msg = 'Status check of idle inline process should return False'
+        self.assertFalse(daemon.status(), msg)
+
+    def test_status_call_before_inline_process_start(self):
+        """Test that status call before start does not leave PID file.
+        """
+        # Check that PID file is not present.
+        msg = 'PID file BEFORE DummyDaemon initialisation should not exist'
+        self.assertFalse(os.path.exists(self._pid_file), msg)
+
+        daemon = DummyDaemon(pidfile=self._pid_file)
+
+        # PID file should still not be present.
+        msg = 'PID file AFTER DummyDaemon initialisation should not exist'
+        self.assertFalse(os.path.exists(self._pid_file), msg)
+
+        # Run a status check and confirm that the PID file is still not
+        # present.
+        daemon.status()
+        msg = 'PID file AFTER DummyDaemon status check should not exist'
+        self.assertFalse(os.path.exists(self._pid_file), msg)
 
     def tearDown(self):
         self._pid_file = None

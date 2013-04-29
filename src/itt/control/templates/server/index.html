@@ -13,43 +13,42 @@ The itt.control.config index.html accessible via:
 
 {% block title %}IP Test Tool Server{% endblock %}
 
-<div id=wrapper>
 {% block content %}
-    <h2>ITT Server index ...</h2>
 
-    {% if server_list %}
-    <table>
-        <colgroup>
-            <col id="name" />
-            <col id="protocol" />
-            <col id="port" />
-            <col id="root" />
-            <col id="running" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th id="nameHead">Name</td>
-                <th id="protocolHead">Protocol</td>
-                <th id="portHead">Port</td>
-                <th id="rootHead">Root</td>
-                <th id="runningHead">Running</td>
-            </tr>
-        </thead>
-        <tbody>
-        {% for server in server_list %}
-            <tr>
-                <td>{{ server.name }}</td>
-                <td>{{ server.protocol }}</td>
-                <td>{{ server.port }}</td>
-                <td>{{ server.root }}</td>
-                <td>{{ server.active|yesno }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+<h1>Servers</h1>
 
-    <a href="/server/insert/">Create new Server</a>
-</div> {# wrapper #}
+{% if server_list %}
+<table>
+    <colgroup>
+        <col id="name" />
+        <col id="protocol" />
+        <col id="port" />
+        <col id="root" />
+        <col id="running" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th id="nameHead">Name</td>
+            <th id="protocolHead">Protocol</td>
+            <th id="portHead">Port</td>
+            <th id="rootHead">Root</td>
+        </tr>
+    </thead>
+    <tbody>
+    {% for server in server_list %}
+        {% if forloop.counter|divisibleby:"2" %}
+        <tr>
+        {% else %}
+        <tr class="odd">
+        {% endif %}
+            <td>{{ server.name }}</td>
+            <td>{{ server.protocol }}</td>
+            <td>{{ server.port }}</td>
+            <td>{{ server.root }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
 {% endblock %} {# content #}

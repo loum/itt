@@ -101,7 +101,7 @@ class Daemon(object):
             barfs if you try to kill it.  Defaults to ``True``.
 
         **Raises:**
-            IOError if *pidfile* is not writable.
+            ``IOError`` if *pidfile* is not writable.
 
         """
         self._pidfile = pidfile
@@ -168,6 +168,10 @@ class Daemon(object):
             When starting a new process, the PID file will be relative
             to '/' once the process is forked.
 
+        **Raises:**
+            :mod:`itt.utils.daemon.DaemonError` if *pidfile* contains
+            invalid content.
+
         """
         if not os.path.isabs(self.pidfile):
             self._debug('PID file "%s" is relative -- make absolute' %
@@ -180,13 +184,11 @@ class Daemon(object):
             # PID file exists, so the process may be active.
             # Set the current process PID.
             self._debug('PID file "%s" exists' % self.pidfile)
-            self.pid = file(self.pidfile, 'r').read().strip()
-            self._debug('Stored PID is: %s' % self.pid)
-        else:
-            # PID file is missing -- process is idle.
-            # Check if writable to save hassles later on.
-            self._debug('No PID file -- creating handle')
-            self.pidfs = is_writable(self.pidfile)
+            try:
+                self.pid = int(file(self.pidfile, 'r').read().strip())
+                self._debug('Stored PID is: %d' % self.pid)
+            except ValueError as err:
+                raise DaemonError('Error reading PID file: %s' % err)
 
     def start(self):
         """Wrapper around the erver start process.
@@ -242,28 +244,37 @@ class Daemon(object):
                 ``False`` -- failure
 
         **Raises:**
-            DaemonError
+            :mod:`itt.utils.daemon.DaemonError`, if:
+
+            * PID file has not been defined
+            * PID file is not writable
 
         """
         start_status = False
 
+        # If we have got this far, check that we have a valid PID file.
         if self.pidfile is None:
             raise DaemonError('PID file has not been defined')
 
-        self._debug('checking daemon status with PID: "%s"' % self.pid)
+        self._debug('checking daemon status with PID: %s' % self.pid)
         if self.pid is not None:
             msg = ('PID file "%s" exists.  Daemon may be running?\n' %
                    self.pidfile)
             log.error(msg)
         else:
-            # So far, so good -- start the daemon.
-            self._debug('starting daemon')
-            self.daemonize()
-            #self.run()
-            self._start_server(self.exit_event)
-            start_status = True
+            # Check if PID file is writable to save hassles later on.
+            self._debug('No PID file -- creating handle')
+            try:
+                self.pidfs = is_writable(self.pidfile)
+                self._debug('starting daemon')
+                self.daemonize()
+                self._start_server(self.exit_event)
+                start_status = True
+            except IOError as err:
+                err_msg = 'Cannot write to PID file: IOError "%s"' % err
+                raise DaemonError(err_msg)
 
-        return start_status 
+            return start_status 
  
     def daemonize(self):
         """Prepare the daemon environment.
@@ -370,7 +381,6 @@ class Daemon(object):
         elif self.pid is None:
             # PID or PID file does not exist.
             log.warn('Stopping process but unable to find PID')
-            self._cleanup()
         else:
             # Should not happen, but ...
             log.warn('PID file exists with invalid value: "%s"' %
@@ -404,15 +414,6 @@ class Daemon(object):
         """Simple wrapper method around file deletion.
         """
         os.remove(self.pidfile)
-
-    def _cleanup(self):
-        """
-        """
-        self.pidfs.close()
-        try:
-            os.remove(self.pidfile)
-        except OSError:
-            pass
 
     def _debug(self, log_msg):
         """Wrapper method around the debug logging level which adds a bit
@@ -457,6 +458,26 @@ class Daemon(object):
             start_status = True
 
         return start_status
+
+    def status(self):
+        """
+        **Returns:**
+            boolean::
+
+                ``True`` -- PID is active
+                ``False`` -- PID is inactive
+
+        """
+        process_status = False
+
+        if self.pid is not None:
+            try:
+                os.kill(int(self.pid), 0)
+                process_status = True
+            except OSError:
+                pass
+
+        return process_status
 
 
 class DaemonError(Exception):
