@@ -13,40 +13,65 @@ The itt.control.config index.html accessible via:
 
 {% block title %}IP Test Tool Config{% endblock %}
 
-<div id=wrapper>
-
 {% block content %}
-    <h2>ITT Config index ...</h2>
-    <table>
-        <colgroup>
-            <col id="standalone" />
-            <col id="client" />
-            <col id="server" />
-            <col id="instance" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th id="standaloneHead">Is Standalone?</th>
-                <th id="clientHead">Client active?</th>
-                <th id="serverHead">Server active?</th>
-                <th id="instanceHead">Instance role</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if config %}
-            <tr>
-                <td>{{ config.standalone }}</td>
-                <td>{{ config.client }}</td>
-                <td>{{ config.server }}</td>
-                <td>{{ config.get_role_display }}</td>
-            </tr>
-            {% else %}
-            <tr />
-            {% endif %}
-        </tbody>
-    </table>
 
-    <a href="/config/update/">Modify Settings?</a>
-</div> {# wrapper #}
+<h1>Settings</h1>
+<form action="" method="post">
+    <fieldset>
+        <p>
+            <input type="checkbox"
+                   name="standalone"
+                   id="id_standalone"
+                   {{ config.standalone|yesno:"checked," }} />
+            <label for="standalone">
+                ITT is <b>standalone</b> (client and server are local)
+            </label>
+        </p>
+        <p class="label_checkbox_pair">
+            <input type="checkbox"
+                   name="client"
+                   id="id_client"
+                   {{ config.client|yesno:"checked," }} />
+            <label for="client">
+                <b>Client</b> is enabled in this instance
+            </label>
+        </p>
+        <p class="label_checkbox_pair">
+            <input type="checkbox"
+                   name="server"
+                   id="id_server"
+                   {{ config.server|yesno:"checked," }} />
+            <label for="server">
+                <b>Server</b> is enabled in this instance
+            </label>
+        </p>
+        <p>
+            {{ form.role }}
+            <label for="role">Role</label>
+        </p>
+    </fieldset>
+
+    {% csrf_token %}
+    <input type="submit" name="submit" value="Change Settings" />
+    <input type="reset" value="Reset" />
+    <input type="submit" name='cancel' value="Cancel"><br />
+</form>
+{% if config.server %}
+<form action="" method="post">
+    <h1>Servers</h1>
+    <fieldset>
+        {% csrf_token %}
+        {% for server in server_list %}
+        <p>
+            <input type="submit"
+                   name="submit"
+                   value="{{ server.status|yesno:"Stop,Start" }} {{ server.name }}" />
+        </p>
+        {% endfor %}
+    </fieldset>
+</form>
+{% else %}
+<p>NO <b>Servers</b> are configured for this instance</p>
+{% endif %}
 
 {% endblock %} {# content #}

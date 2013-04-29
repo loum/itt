@@ -3,12 +3,12 @@ import unittest2
 import itt
 
 
-class TestConfig(unittest2.TestCase):
+class TestServerConfig(unittest2.TestCase):
 
     def test_parse_config(self):
         """Test initial parsing of the configuration settings.
         """
-        c = itt.Config(server='ftp')
+        c = itt.ServerConfig(server='ftp')
 
         # Override the settings attribute with some bogus data.
         c.settings = """
@@ -26,7 +26,7 @@ item02 = item02 value
     def test_call_missing_section(self):
         """Test call to a missing configuration section.
         """
-        c = itt.Config()
+        c = itt.ServerConfig()
         c.server = 'bogus'
         with self.assertRaises(KeyError):
             c.lookup

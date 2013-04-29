@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+
 {% comment %}
 The itt.control.server server_form.html accessible via:
 
@@ -5,8 +7,11 @@ The itt.control.server server_form.html accessible via:
 
 {% endcomment %}
 
-<h1>ITT Server insert ...</h1>
+{% block title %}IP Test Tool Server Insert{% endblock %}
 
+{% block content %}
+
+<h1>Servers</h1>
 <form action="" method="post">
     <table>
         {{ form.as_table }}
@@ -16,3 +21,6 @@ The itt.control.server server_form.html accessible via:
     <input type="reset" value="Reset" />
     <input type="submit" name='cancel' value="Cancel"><br />
 </form>
+
+{% endblock %} {# content #}
+
