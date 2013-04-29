@@ -37,7 +37,7 @@ docs:
 	sphinx-build -b html ./doc/source ./doc/build
 
 init:
-	$(PY) $(DJANGO_INIT)
+	PYTHONPATH=$(PYTHONPATH) $(PY) $(DJANGO_INIT)
 
 test: django_test
 
