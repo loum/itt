@@ -22,27 +22,9 @@ class Client(object):
     def __init__(self, config):
         """Client class initialisation.
         """
-        self._host = None
-        self._port = None
         self._client = None
 
         self.config = config
-
-    @property
-    def host(self):
-        return self._host
-
-    @host.setter
-    def host(self, value):
-        self._host = value
-
-    @property
-    def port(self):
-        return self._port
-
-    @port.setter
-    def port(self, value):
-        self._port = value
 
     @property
     def client(self):
