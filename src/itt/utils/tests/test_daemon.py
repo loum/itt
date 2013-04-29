@@ -140,8 +140,8 @@ class TestDaemon(unittest2.TestCase):
         daemon = DummyDaemon(pidfile=None)
         daemon.pid = 99999
 
-        with self.assertRaises(OSError):
-            daemon.status()
+        msg = 'Status check on an invalid PID should return false'
+        self.assertFalse(daemon.status(), msg)
 
     def test_status_idle_inline_process(self):
         """Test status of PID for an iidle inline process.

@@ -4,7 +4,7 @@ __all_ = [
 
 from abc import ABCMeta, abstractmethod
 
-from itt.utils.log import class_logging
+from itt.utils.log import log, class_logging
 
 import itt
 
@@ -19,14 +19,15 @@ class Client(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """Client class initialisation.
         """
         self._host = None
         self._port = None
         self._client = None
 
-        self.config = config
+        if config is not None:
+            self.config = config
 
     @property
     def host(self):
