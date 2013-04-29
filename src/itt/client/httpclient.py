@@ -50,22 +50,34 @@ class HttpClient(itt.Client):
             else:
                 url_path = "/itt/testing/dev/random"
                 log.info("  content         : (random data)")
-                log.info("  size            : %s bytes" % self.config.bytes)
 
-            generated_url = "http://%s%s" % (
+            min_gap = self.getGap()
+            chunk = self.getChunk()
+
+            generated_url = "http://%s/%s?minimum_gap=%s&chunk_size=%s" % (
                 self.config.netloc,
                 url_path,
+                min_gap,
+                chunk,
             )
+
+            ##  Size for random data...
+            if self.config.content is None:
+                log.info("  size            : %s bytes" % self.config.bytes)
+                generated_url = "%s&bytes=%s" % (
+                    generated_url,
+                    self.config.bytes,
+                )
+
             log.info("  url             : %s" % generated_url)
 
-            print urlparse.urlsplit(self.opts.url)
-            download = requests.get(self.opts.url)
-            log.info("HTTP client finishes download (HTTP GET): %s" % (self.opts.url))
-            if download.status_code == 200:
-                shasum = hashlib.sha1(download.content).hexdigest()
-                log.info("SHA1 sum of content received: %s" % (shasum))
-            else:
-                log.error("Download (HTTP GET) failed with status code: %s" % (download.status_code))
+            download = requests.get(generated_url)
+            shasum = hashlib.sha1(download.content).hexdigest()
+            log.info("HTTP client finishes download (HTTP GET):")
+            log.info("  url             : %s" % generated_url) 
+            log.info("  received        : %s bytes" % len(download.content))
+            log.info("  sha1_sum        : %s" % shasum)
+            log.info("  http_response   : %s" % (download.status_code))
         except requests.ConnectionError, e:
             log.error("Download (HTTP GET) failed with a connection error: %s" % (str(e)))
 
@@ -80,7 +92,7 @@ class HttpClient(itt.Client):
 
         try:
             log.info("HTTP client begins upload (HTTP POST):")
-            generated_url = "http://%s%s" % (
+            generated_url = "http://%s/%s" % (
                 self.config.netloc,
                 HTTP_DEVNULL,
             )
@@ -138,6 +150,7 @@ class HttpClient(itt.Client):
             ##  XXX: todo: generalise the sha1sum stuff
             shasum = hashlib.sha1(self.sent_data).hexdigest()
             log.info("HTTP client finishes upload (HTTP POST):")
+            log.info("  url             : %s" % generated_url)
             log.info("  sent            : %s bytes" % len(self.sent_data))
             log.info("  sha1_sum        : %s" % shasum)
 
