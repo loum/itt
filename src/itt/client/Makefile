@@ -24,5 +24,4 @@ test:
 	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) $(NOSE) $(TEST)
 
 clean:
-	find . -type f -name "*.pyc" -exec rm {} \;
-	rm -fr MANIFEST dist/ build/
+	git clean -xdf
