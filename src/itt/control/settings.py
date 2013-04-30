@@ -160,3 +160,6 @@ LOGGING = {
         },
     }
 }
+
+# Temporary hack to server the ITT documentation via the Django test server.
+STATIC_DOC_ROOT = '../doc/build'
