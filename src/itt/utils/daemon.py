@@ -1,5 +1,7 @@
-"""The :mod:`itt.utils.daemon` module aims to provide the functionality
-to support daemonisation of a process.
+"""The :mod:`itt.utils.daemon` module provides your server with start and
+stop functionality.  Furthermore, it supports process daemonisation so that
+the server could be run as a self-contained
+Linux service.
 
 .. note::
 
@@ -16,6 +18,7 @@ import os
 import atexit
 import signal
 import time
+import multiprocessing
 from abc import ABCMeta, abstractmethod
 
 from itt.utils.log import log, class_logging
@@ -26,8 +29,8 @@ from itt.utils.files import is_writable
 class Daemon(object):
     """A generic daemon class.
     
-    :class:`Daemon` will prepare the daemon environment for you but
-    expects that you give it an entry point (:meth:`run`) to the
+    :class:`itt.utils.Daemon` will prepare the daemon environment for you
+    but expects that you give it an entry point (:meth:`run`) to the
     functional component of your process.
 
     The following example shows a trivial class that defines a :meth:`run`
@@ -36,20 +39,34 @@ class Daemon(object):
     >>> import itt.utils
     >>> import time
     >>> class DummyDaemon(itt.utils.Daemon):
-    >>>     def run(self):
-    >>>         while True:
-    >>>             time.sleep(5)
-    >>>
-    >>> d = DummyDaemon(pidfile='/tmp/my_dummy_pid')
+    ...     def _start_server(self, event):
+    ...         while True:
+    ...             time.sleep(5)
+    ... 
+    >>> d = DummyDaemon(pidfile=None)
     >>> d.start()
+    True
     ...
 
-    To stop:
+    And later, to stop:
+
     >>> d.stop()
+    True
+    ...
 
     The :meth:`start` method manages the daemonisation of the environment
     and makes the actual call to your own instance of the :meth:`run`
     method.
+
+    .. note:;
+
+        All public attribute access is implemented in a Pythonic property
+        decorator style.
+
+    .. attribute:: exit_event (:class:`multiprocessing.Event`)
+
+        Internal semaphore that when set, signals that the server process
+        is to be terminated.
 
     """
     __metaclass__ = ABCMeta
@@ -84,7 +101,7 @@ class Daemon(object):
             barfs if you try to kill it.  Defaults to ``True``.
 
         **Raises:**
-            IOError if *pidfile* is not writable.
+            ``IOError`` if *pidfile* is not writable.
 
         """
         self._pidfile = pidfile
@@ -92,6 +109,7 @@ class Daemon(object):
         self.stdout = stdout
         self.stderr = stderr
         self._term_parent = term_parent
+        self._exit_event = multiprocessing.Event()
 
         self.pid = None
         self.pidfs = None
@@ -112,8 +130,35 @@ class Daemon(object):
     def term_parent(self):
         return self._term_parent
 
+    @property
+    def exit_event(self):
+        return self._exit_event
+
+    @exit_event.setter
+    def exit_event(self, value):
+        self._exit_event = value
+
     @abstractmethod
-    def run(self): pass
+    def _start_server(self):
+        """Define this method within your class generalisation with logic
+        that invokes your process to benefit from the daemonisation
+        facility.  In fact, the method is abstract to force you to do just
+        that.  The method should contain the logic that invokes your
+        process.
+
+        Consider this method to be private in the sense that it should not
+        be invoked directly.  Instead, allow the context of the process
+        invocation (either as a deamon or inline), to prepare the
+        environment for you.  From within your class, all you need to do
+        is call the :meth:`itt.utils.Daemon.start` method.
+
+        **Kargs:**
+            event (:mod:`multiprocessing.Event`): Internal semaphore that
+            can be set via the :mod:`signal.signal.SIGTERM` signal event
+            to perform a function within the running proess.
+
+        """
+        pass
 
     def _validate(self):
         """Validator method called during object initialisation.
@@ -122,6 +167,11 @@ class Daemon(object):
 
             When starting a new process, the PID file will be relative
             to '/' once the process is forked.
+
+        **Raises:**
+            :mod:`itt.utils.daemon.DaemonError` if *pidfile* contains
+            invalid content.
+
         """
         if not os.path.isabs(self.pidfile):
             self._debug('PID file "%s" is relative -- make absolute' %
@@ -134,20 +184,54 @@ class Daemon(object):
             # PID file exists, so the process may be active.
             # Set the current process PID.
             self._debug('PID file "%s" exists' % self.pidfile)
-            self.pid = file(self.pidfile, 'r').read().strip()
-            self._debug('Stored PID is: %s' % self.pid)
-        else:
-            # PID file is missing -- process is idle.
-            # Check if writable to save hassles later on.
-            self._debug('No PID file -- creating handle')
-            self.pidfs = is_writable(self.pidfile)
+            try:
+                self.pid = int(file(self.pidfile, 'r').read().strip())
+                self._debug('Stored PID is: %d' % self.pid)
+            except ValueError as err:
+                raise DaemonError('Error reading PID file: %s' % err)
 
     def start(self):
+        """Wrapper around the erver start process.
+
+        Invokes the server one in two ways:
+
+        * As a daemon
+        * Inline using the :mod:`multiprocessing.Event` module
+
+        Typically, the daemon instance will be used in a production
+        environment and the inline instance for testing or via the
+        Python interpreter.
+
+        .. note::
+
+            :mod:`unittest` barfs if the method under test exits :-(
+
+        The distinction between daemon or inline is made during object
+        initialisation.  If you specify a *pidfile* then it will assume
+        you want to run as a daemon.
+
+        **Returns:**
+            boolean::
+
+                ``True`` -- success
+                ``False`` -- failure
+
+        """
+        start_status = False
+
+        if self.pidfile is not None:
+            start_status = self._start_daemon()
+        else:
+            start_status = self._start_inline()
+
+        return start_status
+
+    def _start_daemon(self):
         """Start the daemon process.
 
         ..note::
 
-            Daemon will only start if PID file does not exist.
+            Daemon will only start if PID file exists (not ``None``).
 
         The :meth:`start` method checks for an existing PID before
         preparing the daemon environment.  Finally, it will initiate
@@ -160,27 +244,37 @@ class Daemon(object):
                 ``False`` -- failure
 
         **Raises:**
-            DaemonError
+            :mod:`itt.utils.daemon.DaemonError`, if:
+
+            * PID file has not been defined
+            * PID file is not writable
 
         """
         start_status = False
 
+        # If we have got this far, check that we have a valid PID file.
         if self.pidfile is None:
             raise DaemonError('PID file has not been defined')
 
-        self._debug('checking daemon status with PID: "%s"' % self.pid)
+        self._debug('checking daemon status with PID: %s' % self.pid)
         if self.pid is not None:
             msg = ('PID file "%s" exists.  Daemon may be running?\n' %
                    self.pidfile)
             log.error(msg)
         else:
-            # So far, so good -- start the daemon.
-            self._debug('starting daemon')
-            self.daemonize()
-            self.run()
-            start_status = True
+            # Check if PID file is writable to save hassles later on.
+            self._debug('No PID file -- creating handle')
+            try:
+                self.pidfs = is_writable(self.pidfile)
+                self._debug('starting daemon')
+                self.daemonize()
+                self._start_server(self.exit_event)
+                start_status = True
+            except IOError as err:
+                err_msg = 'Cannot write to PID file: IOError "%s"' % err
+                raise DaemonError(err_msg)
 
-        return start_status 
+            return start_status 
  
     def daemonize(self):
         """Prepare the daemon environment.
@@ -276,22 +370,21 @@ class Daemon(object):
                 log.warn('err: %s' % str(err))
                 log.warn('PID "%s" does not exist' % self.pid)
                 if err.errno == 3:
-                    log.warn('Removing PID file "%s"' % self.pidfile)
-                    if os.path.exists(self.pidfile):
-                        os.remove(self.pidfile)
+                    # For a daemon process, remove the PID file.
+                    if self.pidfile is not None:
+                        log.warn('Removing PID file "%s"' % self.pidfile)
+                        if os.path.exists(self.pidfile):
+                            os.remove(self.pidfile)
             else:
                 stop_status = True
+                self.pid = None
         elif self.pid is None:
-            # PID file does not exist.
-            log.warn('Stopping process but PID file is missing')
-            self._cleanup()
+            # PID or PID file does not exist.
+            log.warn('Stopping process but unable to find PID')
         else:
             # Should not happen, but ...
             log.warn('PID file exists with invalid value: "%s"' %
                      str(self.pid))
-
-        if stop_status:
-            self.pid = None
 
         return stop_status
  
@@ -322,18 +415,69 @@ class Daemon(object):
         """
         os.remove(self.pidfile)
 
-    def _cleanup(self):
-        """
-        """
-        self.pidfs.close()
-        os.remove(self.pidfile)
-
     def _debug(self, log_msg):
         """Wrapper method around the debug logging level which adds a bit
         more verbose information.
         """
         name = "%s.%s" % (type(self).__module__, type(self).__name__)
         log.debug('%s - %s' % (name, log_msg))
+
+    def _start_inline(self):
+        """The inline variant of the :meth:`start` method.
+
+        This inline variant of the ITT server start process is based on the
+        :mod:`multiprocessing` module.  The server process is spawned,
+        creating a :class:`multiprocessing.Process` object.
+
+        :meth:`_start_inline` is better suited to testing procedures and
+        the Python interpreter as it does not attempt to kill and detach
+        from the parent process.  Also, the PID of the child is
+        self-contained so you don't have to worry about the PID file.
+
+        **Returns:**
+            boolean::
+
+                ``True`` -- success
+                ``False`` -- failure
+
+        """
+        start_status = False
+
+        log_msg = '%s server process' % type(self).__name__
+        log.info('%s - starting inline ...' % log_msg)
+        self.proc = multiprocessing.Process(target=self._start_server,
+                                            args=(self.exit_event,))
+        self.proc.start()
+        log.info('%s - started with PID %d' % (log_msg, self.proc.pid))
+
+        time.sleep(0.1)         # can do better -- check TODO.
+
+        # Flag the server as being operational.
+        if self.proc.is_alive():
+            self.pid = self.proc.pid
+            start_status = True
+
+        return start_status
+
+    def status(self):
+        """
+        **Returns:**
+            boolean::
+
+                ``True`` -- PID is active
+                ``False`` -- PID is inactive
+
+        """
+        process_status = False
+
+        if self.pid is not None:
+            try:
+                os.kill(int(self.pid), 0)
+                process_status = True
+            except OSError:
+                pass
+
+        return process_status
 
 
 class DaemonError(Exception):

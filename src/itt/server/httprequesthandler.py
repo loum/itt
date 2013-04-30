@@ -35,11 +35,17 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
-        log.info("HTTP POST request finished for %s on port %s for %s\n   Resulting SHA1 sum of content: %s" % (
-           self.client_address[0],
-           self.client_address[1],
-           self.path,
-           hashlib.sha1(self.rfile.read()).hexdigest(),
+        received = self.rfile.read()
+
+        log.info(
+            "HTTP POST request finished for %s on port %s for %s\n" \
+            "    Size of received content: %s\n" \
+            "    Resulting SHA1 sum of content: %s" % (
+                self.client_address[0],
+                self.client_address[1],
+                self.path,
+                len(received),
+                hashlib.sha1(received).hexdigest(),
         ))
 
     def do_GET(self):

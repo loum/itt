@@ -4,7 +4,9 @@ __all_ = [
 
 from abc import ABCMeta, abstractmethod
 
-from itt.utils.log import class_logging
+from itt.utils.log import log, class_logging
+
+import itt
 
 
 @class_logging
@@ -17,12 +19,15 @@ class Client(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self):
+    def __init__(self, config=None):
         """Client class initialisation.
         """
         self._host = None
         self._port = None
         self._client = None
+
+        if config is not None:
+            self.config = config
 
     @property
     def host(self):
@@ -47,6 +52,21 @@ class Client(object):
     @client.setter
     def client(self, value):
         self._client = value
+
+    @property
+    def config(self):
+        return self._config
+
+    @config.setter
+    def config(self, value):
+        ##  Expect an itt.TestConfig object for config
+        if type(value) is not itt.TestConfig:
+            ##  XXX: Throw an ITT exception properly
+            msg = "Expected an itt.TestConfig object for 'config'"
+            log.error(msg)
+            raise Exception(msg)
+        else:
+            self._config = value
 
     @abstractmethod
     def download(self, remotename, localname=None): pass

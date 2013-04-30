@@ -1,5 +1,6 @@
 __all__ = [
-    "Config",
+    "ServerConfig",
+    "list",
 ]
 
 import ConfigParser
@@ -7,14 +8,65 @@ import io
 
 import itt
 
+def list():
+    """Display parsed configuraton items to stdout.
 
-class Config(object):
+    For example:
+
+        >>> from itt.server.config import list
+        >>> itt.server.config.list()
+        Section: ftp
+        Options: ['root', 'port', 'pidfile']
+        root = /tmp
+        port = 2121
+        pidfile = /tmp/ittserverd.ftp.pid
+        ...
+
+    """
+    c = itt.ServerConfig()
+    for section_name in c.config.sections():
+        print('Section: %s' % section_name)
+        print('\tOptions: %s' % c.config.options(section_name))
+        for name, value in c.config.items(section_name):
+            print('\t%s = %s' % (name, value))
+        print
+
+
+class ServerConfig(object):
     """Limit the ITT server definitions into one place.
+
+    The configuration structure is built on top of :mod:`ConfigParser`
+    module and follows the same section/items based principle.  For
+    example, the ITT variant of the configuration for an FTP server is:
+
+        # This is valid ConfigParser syntax:
+        [ftp]  # section header
+        root = /tmp  #items
+        port = 2121
+        pidfile = /tmp/ittserverd.ftp.pid
+
+    To access the FTP configuration settings, create an :mod:`itt.ServerConfig`
+    object as follows:
+
+        >>> import itt
+        >>> c = itt.ServerConfig(server='ftp')
+        ...
+
+    To slurp all of the section items into a handy dictionary:
+
+        >>> c.kwargs
+        {'root': '/tmp', 'port': '2121', 'pidfile': ... }
+        ...
 
     .. note::
 
         TODO - we need a better config strategy around the settings
         strategy ...
+
+    An example of how to access the Config items is as follows:
+
+    >>> import itt
+    >>> c = itt.ServerConfig(server='ftp')
 
     The defined attributes are:
 
@@ -53,7 +105,7 @@ class Config(object):
         constructor.
 
     """
-    def __init__(self, server):
+    def __init__(self, server=None):
         """In theory, all supported ITT servers need to be listed here in
         the format that will keep :func:`getattr` happy.
 
@@ -73,11 +125,19 @@ pidfile = /tmp/ittserverd.ftp.pid
 [tftp]
 root = /tmp
 port = 6969
-pidfile = /tmp/ittserverd.tftp.pid"""
+pidfile = /tmp/ittserverd.tftp.pid
+[http]
+root = /tmp
+port = 8000
+pidfile = /tmp/ittserverd.http.pid"""
 
     @property
     def server(self):
         return self._server
+
+    @server.setter
+    def server(self, value):
+        self._server = value
 
     @property
     def server_types(self):
@@ -90,6 +150,10 @@ pidfile = /tmp/ittserverd.tftp.pid"""
     @property
     def settings(self):
         return self._settings
+
+    @settings.setter
+    def settings(self, value):
+        self._settings = value
 
     @property
     def config(self):

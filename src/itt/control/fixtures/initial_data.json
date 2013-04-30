@@ -1,0 +1,58 @@
+[
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "admin", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$62eb6$6ca9079e55a2d504095d228e9ebfd578efc640fb", 
+            "email": "admin@softelsystems.com.au"
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "config.config", 
+        "fields": {
+            "client": true, 
+            "role": "sl", 
+            "server": true, 
+            "standalone": true
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "server.server", 
+        "fields": {
+            "root": "/tmp", 
+            "protocol": "ftp", 
+            "port": 2121, 
+            "name": "default FTP"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "server.server", 
+        "fields": {
+            "root": "/tmp", 
+            "protocol": "tftp", 
+            "port": 6969, 
+            "name": "default TFTP"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "server.server", 
+        "fields": {
+            "root": "/tmp", 
+            "protocol": "http", 
+            "port": 8000, 
+            "name": "default HTTP"
+        }
+    }
+]

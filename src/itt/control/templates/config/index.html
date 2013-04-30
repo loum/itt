@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% comment %}
+The itt.control.config index.html accessible via:
+
+    http://<hostname>:8080/config/
+
+    Variables:
+        config (itt.control.config.Config): direct reference to the Config
+        object
+
+{% endcomment %}
+
+{% block title %}IP Test Tool Config{% endblock %}
+
+{% block content %}
+
+<h1>Settings</h1>
+<form action="" method="post">
+    <fieldset>
+        <p>
+            <input type="checkbox"
+                   name="standalone"
+                   id="id_standalone"
+                   {{ config.standalone|yesno:"checked," }} />
+            <label for="standalone">
+                ITT is <b>standalone</b> (client and server are local)
+            </label>
+        </p>
+        <p class="label_checkbox_pair">
+            <input type="checkbox"
+                   name="client"
+                   id="id_client"
+                   {{ config.client|yesno:"checked," }} />
+            <label for="client">
+                <b>Client</b> is enabled in this instance
+            </label>
+        </p>
+        <p class="label_checkbox_pair">
+            <input type="checkbox"
+                   name="server"
+                   id="id_server"
+                   {{ config.server|yesno:"checked," }} />
+            <label for="server">
+                <b>Server</b> is enabled in this instance
+            </label>
+        </p>
+        <p>
+            {{ form.role }}
+            <label for="role">Role</label>
+        </p>
+    </fieldset>
+
+    {% csrf_token %}
+    <input type="submit" name="submit" value="Change Settings" />
+    <input type="reset" value="Reset" />
+    <input type="submit" name='cancel' value="Cancel"><br />
+</form>
+<h1>Servers</h1>
+{% if config.server %}
+<form action="" method="post">
+    <fieldset>
+        {% csrf_token %}
+        {% for server in server_list %}
+        <p>
+            <input type="submit"
+                   name="submit"
+                   value="{{ server.status|yesno:"Stop,Start" }} {{ server.name }}" />
+        </p>
+        {% endfor %}
+    </fieldset>
+</form>
+{% else %}
+<p>NO <b>Servers</b> are configured for this instance</p>
+{% endif %}
+
+{% endblock %} {# content #}

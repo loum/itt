@@ -2,12 +2,9 @@ __all__ = [
     "Server",
 ]
 
-import multiprocessing
-import time
 from abc import ABCMeta, abstractmethod
 
 import itt.utils
-from itt.utils.log import log
 
 
 class Server(itt.utils.Daemon):
@@ -64,11 +61,6 @@ class Server(itt.utils.Daemon):
         a daemon.  Defaults to ``None`` which suppresses daemonisation
         functionality.
 
-    .. attribute:: exit_event (:class:`multiprocessing.Event`)
-
-        Internal semaphore that when set, signals that the server process
-        is to be terminated.
-
     """
     __metaclass__ = ABCMeta
 
@@ -84,7 +76,6 @@ class Server(itt.utils.Daemon):
         self._bind = 'localhost'
         self._pid = None
         self._pidfile = pidfile
-        self._exit_event = multiprocessing.Event()
 
     @property
     def port(self):
@@ -138,65 +129,3 @@ class Server(itt.utils.Daemon):
     @pidfile.setter
     def pidfile(self, value):
         self._pidfile = value
-
-    @property
-    def exit_event(self):
-        return self._exit_event
-
-    @exit_event.setter
-    def exit_event(self, value):
-        self._exit_event = value
-
-    #@abstractmethod
-    def start(self):
-        """.. method:: start
-
-        Wrapper around the FTP server start process.
-
-        Invokes the FTP server one in two ways:
-
-        * As a daemon
-        * Inline using the :mod:`multiprocessing.Event` module
-
-        Typically, the daemon instance will be used in a production
-        environment and the inline instance for testing or via the
-        Python interpreter.
-
-        .. note::
-
-            :mod:`unittest` barfs if the method under test exits :-(
-
-        The distinction between daemon or inline is made during object
-        initialisation.  If you specify a *pidfile* then it will assume
-        you want to run as a daemon.
-
-        """
-        if self.pidfile is not None:
-            super(Server, self).start()
-        else:
-            self._start_inline()
-
-    @abstractmethod
-    def stop(self):
-        super(Server, self).stop()
-
-    def _start_inline(self):
-        """The inline variant of the :meth:`start` method.
-
-        """
-        log_msg = '%s server process' % type(self).__name__
-
-        # Reset the internal event flag
-        log.info('%s - starting ...' % log_msg)
-        self.proc = multiprocessing.Process(target=self._start_server,
-                                            args=(self.exit_event,))
-        self.proc.start()
-        log.info('%s - started with PID %d' % (log_msg, self.proc.pid))
-        time.sleep(0.1)         # can do better -- check TODO.
-
-        # Flag the server as being operational.
-        if self.proc.is_alive():
-            self.pid = self.proc.pid
-
-    def run(self):
-        self._start_server(self.exit_event)
