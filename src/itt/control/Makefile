@@ -42,8 +42,7 @@ init:
 test: django_test
 
 clean:
-	find . -type f -name "*.pyc" -exec rm {} \;
-	$(PY) $(DJANGO_CLEAN)
+	git clean -xdf
 
 django_test:
 	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
