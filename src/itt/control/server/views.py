@@ -10,7 +10,7 @@ def index(request):
     """Display the current ITT server list.
 
     The ``index.html`` page is the :mod:`itt.control.server` entry point
-    and is accessible bia::
+    and is accessible via::
 
         http://<hostname>:8080/server/
 

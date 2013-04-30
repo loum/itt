@@ -1,13 +1,18 @@
 #header {
-    background: url(images/softel_color.png);
+    background-color: #9900cc;
     height: 52px;
+}
+#header img {
+    float: left;
 }
 #header h1 {
     float: right;
+    position: relative;
+    text-align: right;
     color: #fff;
     font-size: 2.5em;
-    padding-top: 1%;
-    padding-right: 5%;
+    padding-top: 15px;
+    padding-right: 30px;
     border-bottom: 0;
     margin: 0;
 }
@@ -49,7 +54,7 @@ body {
     font-family: Century Gothic, sans-serif;
     /*background-color: #fff;*/
     /*background-color: #e3dcc5;*/
-    background-color: #e8e8e8;
+    background-color: #d1d1d1;
 }
 table {
     position: static;
