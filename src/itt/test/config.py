@@ -1,17 +1,13 @@
 __all__ = [
     "TestConfig",
-    "list",
 ]
-
-import ConfigParser
-import io
 
 from types import *
 
-import itt
 from itt.utils.log import log, class_logging
+from itt.utils.typer import bool_check
 
-
+@class_logging
 class TestConfig(object):
     """Test Configuration...
 
@@ -113,15 +109,9 @@ class TestConfig(object):
         return self._upload
 
     @upload.setter
+    @bool_check
     def upload(self, value):
-        if type(value) is bool:
-            self._upload = value
-        else:
-            ## XXX: throw a proper ITT exception?
-            msg = "Upload should be true or false"
-            log.error(msg)
-            raise Exception(msg)
-
+        self._upload = value
 
     ##--bytes
     @property
