@@ -101,6 +101,22 @@ preparint the environment for you::
    :members:
    :show-inheritance:
 
+:mod:`itt.control.test_config` -- Modules
+-----------------------------------------
+ .. automodule:: itt.control.test_config
+
+:mod:`itt.control.test_config.views` -- The ITT Test Config View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.test_config.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.test_config.models` -- The ITT Test Config Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.test_config.models
+   :members:
+   :show-inheritance:
+
 Indices and tables
 ==================
 
