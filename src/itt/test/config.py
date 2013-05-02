@@ -109,8 +109,10 @@ class TestConfig(object):
         return self._bytes
 
     @bytes.setter
-    @int_check(greater_than=0)
+    @int_check(greater_than=-1)
     def bytes(self, value):
+        """Treat a value of 0 as network default (???)
+        """
         self._bytes = value
 
     ##--content
