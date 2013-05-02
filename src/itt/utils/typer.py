@@ -1,6 +1,8 @@
 __all__ = [
     "bool_check",
     "int_check",
+    "float_check",
+    "numeric_check",
     "not_none_check",
 ]
 
@@ -79,13 +81,76 @@ def int_check(greater_than=None,
         ...
 
     **Kwargs:**
-        greater_than (int): The lower boundary of range (inclusive)
+        greater_than (int): The lower boundary of range (inclusive).
 
-        less_than (int): The upper boundary of range (inclusive)
+        less_than (int): The upper boundary of range (inclusive).
+
+    **Raises:**
+        As per the :func:`numeric_check` decorator.
+
+    """
+    return numeric_check(type_to_check=types.IntType,
+                         greater_than=greater_than,
+                         less_than=less_than)
+
+def float_check(greater_than=None,
+                less_than=None):
+    """Float property attribute checker.
+
+    Usage is exactly the same as :func:`int_check` decorator except that the
+    check is around ``float``'s rather than ``int``'s.
+
+    **Kwargs:**
+        greater_than (int): The lower boundary of range (inclusive).
+
+        less_than (int): The upper boundary of range (inclusive).
+
+    **Raises:**
+        As per the :func:`numeric_check` decorator.
+
+    """
+    return numeric_check(type_to_check=types.FloatType,
+                         greater_than=greater_than,
+                         less_than=less_than)
+
+def numeric_check(type_to_check,
+                  greater_than=None,
+                  less_than=None):
+    """An abstraction of the numeric check decorators.
+
+    Performs the exact same function as the :func:`int_check` and
+    :func:`float_check` decorators less the *type_to_check* argument.
+
+    The following are the same::
+
+        # Int check ...
+        @int_var.setter
+        @int_check(greater_than=-1, less_than=101)
+        def int_var(self, value):
+            self._int_var = value
+
+        # Same int check with the numeric_check decorator
+        import types
+
+        @int_var.setter
+        @numeric_check(type_to_check=types.IntType,
+                       greater_than=-1,
+                       less_than=101)
+        def int_var(self, value):
+            self._int_var = value
+
+    **Kwargs:**
+        type_to_check (:mod:`types`): The actual built-in type to check
+        against.
+
+        greater_than (int): The lower boundary of range (inclusive).
+
+        less_than (int): The upper boundary of range (inclusive).
 
     **Raises:**
         ``TypeError`` exception if the value assigned to the variable is not
-        an ``int`` type.
+        a `type_to_check` type.
+
         ``ValueError`` exception if the value assigned to the variable is
         not within the specified range.
 
@@ -93,7 +158,7 @@ def int_check(greater_than=None,
     def wrapped(f):
         def validate(self, *args):
             if args[0] is not None:
-                if type(args[0]) is not int:
+                if type(args[0]) is not type_to_check:
                     raise TypeError('expecting a int value')
 
                 if greater_than is not None:

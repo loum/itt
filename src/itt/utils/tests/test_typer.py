@@ -3,6 +3,7 @@ import random
 
 from itt.utils.typer import (bool_check,
                              int_check,
+                             float_check,
                              not_none_check)
 
 class Bogus(object):
@@ -12,6 +13,7 @@ class Bogus(object):
         self._int_var_lt = 0
         self._not_none_var = 0
         self._int_not_none_var = 0
+        self._float_var = 0
 
     @property
     def bool_var(self):
@@ -67,6 +69,15 @@ class Bogus(object):
     @not_none_check
     def int_not_none_var(self, value):
         self._int_not_none_var = value
+
+    @property
+    def float_var(self):
+        return self._float_var
+
+    @float_var.setter
+    @float_check()
+    def float_var(self, value):
+        self._float_var = value
 
 class TestTyper(unittest2.TestCase):
 
@@ -128,6 +139,13 @@ class TestTyper(unittest2.TestCase):
         self._bogus.int_var = 0
         self.assertFalse(self._bogus.int_var, msg)
 
+    def test_int_check_with_valid_assignment(self):
+        """Assign a valid int.
+        """
+        msg = 'Int assignment should honor value and not raise exception'
+        self._bogus.int_var = 0
+        self.assertFalse(self._bogus.int_var, msg)
+
     def test_int_check_with_valid_int_lower_than_range(self):
         """Assign a valid int which is lower than range.
         """
@@ -167,6 +185,14 @@ class TestTyper(unittest2.TestCase):
         expected = random.randint(1, 10)
         self._bogus.int_not_none_var = expected
         self.assertEqual(self._bogus.int_not_none_var, expected, msg)
+
+    def test_float_check_with_valid_assignment(self):
+        """Assign a valid float.
+        """
+        expected = random.uniform(0, 10)
+        msg = 'Float assignment should honor value and not raise exception'
+        self._bogus.float_var = expected
+        self.assertEqual(self._bogus.float_var, expected, msg)
 
     @classmethod
     def tearDownClass(cls):
