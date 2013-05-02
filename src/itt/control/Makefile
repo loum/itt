@@ -39,11 +39,11 @@ docs:
 init:
 	PYTHONPATH=$(PYTHONPATH) $(PY) $(DJANGO_INIT)
 
-test: django_test
+test:
+	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
+	$(DJANGO_TEST) --verbosity=2 $(TEST)
 
 clean:
 	git clean -xdf
 
-django_test:
-	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
-	$(DJANGO_TEST) --verbosity=2 $(TEST)
+.PHONY: test
