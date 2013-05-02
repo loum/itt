@@ -1,17 +1,15 @@
 __all__ = [
     "TestConfig",
-    "list",
 ]
-
-import ConfigParser
-import io
 
 from types import *
 
-import itt
 from itt.utils.log import log, class_logging
+from itt.utils.typer import (bool_check,
+                             int_check,
+                             not_none_check)
 
-
+@class_logging
 class TestConfig(object):
     """Test Configuration...
 
@@ -77,24 +75,11 @@ class TestConfig(object):
         return self._port
 
     @port.setter
+    @int_check(greater_than=0, less_than=65536)
+    @not_none_check
     def port(self, value):
-        MAX_PORT = 65535
-
-        try:
-            int(value)
-        except:
-            ## XXX: convert to a ITT exception?
-            msg = "Invalid port number (must be an int)"
-            log.error(msg)
-            raise Exception(msg)
-        
-        if value > 0 and int(value) <= MAX_PORT:
-            self._port = value
-        else:
-            ## XXX: throw a proper ITT exception?
-            msg = "Invalid port number (must be > 0 and < 65536)"
-            log.error(msg)
-            raise Exception(msg)
+        #MAX_PORT = 65535
+        self._port = value
 
     
     ##--netloc
@@ -113,15 +98,9 @@ class TestConfig(object):
         return self._upload
 
     @upload.setter
+    @bool_check
     def upload(self, value):
-        if type(value) is bool:
-            self._upload = value
-        else:
-            ## XXX: throw a proper ITT exception?
-            msg = "Upload should be true or false"
-            log.error(msg)
-            raise Exception(msg)
-
+        self._upload = value
 
     ##--bytes
     @property
@@ -129,26 +108,9 @@ class TestConfig(object):
         return self._bytes
 
     @bytes.setter
+    @int_check(greater_than=1)
     def bytes(self, value):
-        if type(value) is NoneType:
-            self._bytes = value
-        else:
-            try:
-                int(value)
-            except:
-                ## XXX: convert to a ITT exception?
-                msg = "Invalid content size (bytes) (must be an int)"
-                log.error(msg)
-                raise Exception(msg)
-
-            if value > 0:
-                self._bytes = value
-            else:
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid content size (bytes) (must be > 0)"
-                log.error(msg)
-                raise Exception(msg)
-
+        self._bytes = value
 
     ##--content
     @property
@@ -212,22 +174,6 @@ class TestConfig(object):
         return self._chunk_size
 
     @chunk_size.setter
+    @int_check(greater_than=0)
     def chunk_size(self, value):
-        if type(value) is NoneType:
-            self._chunk_size = value
-        else:
-            try:
-                int(value)
-            except:
-                ## XXX: convert to a ITT exception?
-                msg = "Invalid chunk size (must be an int)"
-                log.error(msg)
-                raise Exception(msg)
-
-            if value > 0:
-                self._chunk_size = value
-            else:
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid chunk size (must be > 0)"
-                log.error(msg)
-                raise Exception(msg)
+        self._chunk_size = value
