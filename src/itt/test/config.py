@@ -7,6 +7,7 @@ from types import *
 from itt.utils.log import log, class_logging
 from itt.utils.typer import (bool_check,
                              int_check,
+                             float_check,
                              not_none_check)
 
 @class_logging
@@ -108,7 +109,7 @@ class TestConfig(object):
         return self._bytes
 
     @bytes.setter
-    @int_check(greater_than=1)
+    @int_check(greater_than=0)
     def bytes(self, value):
         self._bytes = value
 
@@ -147,26 +148,9 @@ class TestConfig(object):
         return self._minimum_gap
 
     @minimum_gap.setter
+    @float_check(greater_than=0)
     def minimum_gap(self, value):
-        if type(value) is NoneType:
-            self._minimum_gap = value
-        else:
-            try:
-                float(value)
-            except:
-                ## XXX: convert to a ITT exception?
-                msg = "Invalid minimum gap (must be a float)"
-                log.error(msg)
-                raise Exception(msg)
-
-            if float(value) > 0:
-                self._minimum_gap = value
-            else:
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid minimum gap"
-                log.error(msg)
-                raise Exception(msg)
-
+        self._minimum_gap = value
 
     ##--chunk_size
     @property
