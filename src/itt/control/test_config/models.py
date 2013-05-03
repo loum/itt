@@ -54,8 +54,12 @@ class TestConfig(models.Model):
     bytes = IntegerRangeField(default=0,
                               min_value=0,
                               validators=[MinValueValidator(0)])
-    minimum_gap = FloatRangeField(min_value=0,
+    minimum_gap = FloatRangeField(default=0,
+                                  min_value=0,
                                   validators=[MinValueValidator(0)])
+    chunk_size = IntegerRangeField(default=0,
+                                   min_value=0,
+                                   validators=[MinValueValidator(0)])
 
     def get_fields(self):
         """Sugar function that returns a list of tuples representing

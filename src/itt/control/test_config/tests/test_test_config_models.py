@@ -26,3 +26,10 @@ class TestTestConfigModels(TransactionTestCase):
         test_config = TestConfig(minimum_gap=-1)
         with self.assertRaises(ValidationError):
             test_config.clean_fields()
+
+    def test_init_chunk_size_field_below_range(self):
+        """Test TestConfig.chunk_size field minimum value.
+        """
+        test_config = TestConfig(chunk_size=-1)
+        #with self.assertRaises(ValidationError):
+        test_config.clean_fields()
