@@ -1,8 +1,9 @@
+""":mod:`itt.test.config` defines the settings that make up a ITT test case.
+"""
+
 __all__ = [
     "TestConfig",
 ]
-
-from types import *
 
 from itt.utils.log import log, class_logging
 from itt.utils.typer import (bool_check,
@@ -10,20 +11,44 @@ from itt.utils.typer import (bool_check,
                              float_check,
                              not_none_check)
 
+
 @class_logging
 class TestConfig(object):
     """Test Configuration...
 
-    XXX: Todo: Doco!
+    .. note::
 
+        All public attribute access is implemented in a Pythonic property
+        decorator style.
+
+    .. attribute:: netloc
+
+        Property getter which returns a ``string`` object representing a
+        combination of host and port as ``host:port``
+
+    .. attribute:: upload
+
+        ``bool`` value which flags the test case for upload (from the
+        perspective of the client)
+
+    .. attribute:: bytes
+
+    .. attribute:: content
+
+    .. attribute:: minimum_gap
+
+    .. attribute:: chunk_size
     """
-    def __init__(self, host, port, protocol,
+
+    def __init__(self,
+                 host=None,
+                 port=None,
+                 protocol=None,
                  upload=None,
                  bytes=None,
                  content=None,
                  minimum_gap=None,
-                 chunk_size=None,
-                ):
+                 chunk_size=None,):
         ##  enums...
         self.VALID_PROTOCOLS = [
             'http',
@@ -32,14 +57,14 @@ class TestConfig(object):
         ]
 
         ##  properties
-        self.host = host
-        self.port = port
-        self.upload = upload
-        self.bytes = bytes
-        self.content = content
-        self.protocol = protocol
-        self.minimum_gap = minimum_gap
-        self.chunk_size = chunk_size
+        self._host = host
+        self._port = port
+        self._upload = upload
+        self._bytes = bytes
+        self._content = content
+        self._protocol = protocol
+        self._minimum_gap = minimum_gap
+        self._chunk_size = chunk_size
 
     def __repr__(self):
         return "<TestConfig host:%s port:%s protocol:%s upload:%s bytes:%s content:%s minimum_gap:%s chunk_size:%s>" % (
@@ -50,10 +75,8 @@ class TestConfig(object):
             self.bytes,
             self.content,
             self.minimum_gap,
-            self.chunk_size,
-            )
-    
-    
+            self.chunk_size,)
+
     ##--host
     @property
     def host(self):
@@ -65,10 +88,9 @@ class TestConfig(object):
             self._host = value
         else:
             ## XXX: throw a proper ITT exception?
-            msg = "Host should be provided as a string (either hostname or IP)"
+            msg = "Host should be provided as a string (hostname or IP)"
             log.error(msg)
             raise Exception(msg)
-
 
     ##--port
     @property
@@ -82,16 +104,13 @@ class TestConfig(object):
         #MAX_PORT = 65535
         self._port = value
 
-    
     ##--netloc
-    ##   -> is the combination of host and port as "host:port"
     @property
     def netloc(self):
         return "%s:%s" % (
             self.host,
             self.port,
         )
-
 
     ##--upload
     @property
@@ -122,7 +141,6 @@ class TestConfig(object):
     def content(self, value):
         self._content = value
 
-
     ##--protocol
     @property
     def protocol(self):
@@ -140,7 +158,6 @@ class TestConfig(object):
             msg = "Invalid protocol"
             log.error(msg)
             raise Exception(msg)
-
 
     ##--minimum_gap
     @property
