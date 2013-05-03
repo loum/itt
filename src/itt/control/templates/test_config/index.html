@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% comment %}
+The itt.control.testconfig index.html accessible via:
+
+    http://<hostname><:itt_port>/testconfig/
+
+    Variables:
+        test_config_list (itt.control.test_config.TestConfig): direct
+        reference to the list of itt.control.test_config.TestConfig objects.
+
+{% endcomment %}
+
+{% block title %}IP Test Tool Test Config{% endblock %}
+
+{% block content %}
+
+<h1>Test Configurations</h1>
+
+<table>
+    <colgroup>
+        <col id="name" />
+        <col id="upload" />
+        <col id="bytes" />
+        <col id="minimum_gap" />
+        <col id="chunk_size" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th id="nameHead">Test Name</td>
+            <th id="uploadHead">Upload</td>
+            <th id="bytesHead">Bytes</td>
+            <th id="minimum_gapHead">Minimum Gap</td>
+            <th id="chunk_sizeHead">Chunk Size</td>
+        </tr>
+    </thead>
+    {% if test_config_list %}
+    <tbody>
+    {% for test_config in test_config_list %}
+        {% if forloop.counter|divisibleby:"2" %}
+        <tr>
+        {% else %}
+        <tr class="odd">
+        {% endif %}
+            <td>&nbsp;</td>
+            <td>{{ test_config.upload }}</td>
+            <td>{{ test_config.bytes }}</td>
+            <td>{{ test_config.minimum_gap }}</td>
+            <td>{{ test_config.chunk_size }}</td>
+        </tr>
+    {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock %} {# content #}
