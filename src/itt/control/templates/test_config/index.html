@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% comment %}
+The itt.control.testconfig index.html accessible via:
+
+    http://<hostname><:itt_port>/testconfig/
+
+    Variables:
+        test_config_list (itt.control.test_config.TestConfig): direct
+        reference to the list of itt.control.test_config.TestConfig objects.
+
+{% endcomment %}
+{% block css %}
+<link href="{{ STATIC_URL }}test_config.css"
+      rel="stylesheet"
+      type="text/css" />
+{% endblock %}
+{% block title %}IP Test Tool Test Config{% endblock %}
+
+{% block content %}
+<h1>Test Configurations</h1>
+<div id="testConfigList">
+<table>
+    <colgroup>
+        <col id="name" />
+        <col id="upload" />
+        <col id="bytes" />
+        <col id="minimum_gap" />
+        <col id="chunk_size" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th id="nameHead">Test Name</th>
+            <th id="uploadHead">Upload</th>
+            <th id="bytesHead">Bytes</th>
+            <th id="minimum_gapHead">Minimum Gap</th>
+            <th id="chunk_sizeHead">Chunk Size</th>
+        </tr>
+    </thead>
+    {% if test_config_list %}
+    <tbody>
+    {% for test_config in test_config_list %}
+        {% if forloop.counter|divisibleby:"2" %}
+        <tr>
+        {% else %}
+        <tr class="odd">
+        {% endif %}
+            <td class="nameLeftAlign">{{ test_config.name }}</td>
+            <td>{{ test_config.upload }}</td>
+            <td>{{ test_config.bytes }}</td>
+            <td>{{ test_config.minimum_gap }}</td>
+            <td>{{ test_config.chunk_size }}</td>
+        </tr>
+    {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="5"><i>No test configurations available</i></td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+</div> <!-- testConfigList -->
+
+<h1>Add Test Configurations</h1>
+<div id="testConfigAdd">
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+        <colgroup>
+            <col id="name" />
+            <col id="upload" />
+            <col id="bytes" />
+            <col id="minimum_gap" />
+            <col id="chunk_size" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th id="nameHead">Test Name</th>
+                <th id="uploadHead">Upload</th>
+                <th id="bytesHead">Bytes</th>
+                <th id="minimum_gapHead">Minimum Gap</th>
+                <th id="chunk_sizeHead">Chunk Size</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    <input type="submit"
+                           name="submit"
+                           value="Add Test Configuration">
+                    </input>
+                    <input type="reset" value="Reset"></input>
+                    <input type="submit"
+                           name="cancel"
+                           value="Cancel">
+                    </input>
+                </td>
+            </tr>
+        </tfoot>
+        <tbody>
+            <tr>
+                <td class="nameLeftAlign">{{ form.name }}</td>
+                <td>{{ form.upload }}</td>
+                <td>{{ form.bytes }}</td>
+                <td>{{ form.minimum_gap }}</td>
+                <td>{{ form.chunk_size }}</td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+</div> <!-- testConfigAdd -->
+{% endblock %} {# content #}

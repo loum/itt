@@ -1,7 +1,7 @@
 from django.test import TransactionTestCase
 from django.test.client import Client
 
-class TestConfigView(TransactionTestCase):
+class TestConfigViews(TransactionTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -50,5 +50,5 @@ class TestConfigView(TransactionTestCase):
         self.assertEqual(received, expected, msg)
 
     @classmethod
-    def teadDownClass(cls):
+    def tearDownClass(cls):
         cls._c = None

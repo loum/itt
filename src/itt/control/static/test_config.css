@@ -1,0 +1,30 @@
+@import url('/static/itt.css');
+
+#testConfigList, #testConfigAdd {
+    padding-bottom: 5%;
+    height: 320px;
+}
+#testConfigAdd {
+    height: 70px;
+}
+#nameHead {
+    padding-left: 2%;
+    text-align: left;
+    width: 46%;
+}
+#uploadHead, #bytesHead {
+    width: 10%;
+}
+#minimum_gapHead, #chunk_sizeHead {
+    width: 15%;
+}
+#id_name {
+    width: 200px;
+}
+#id_bytes, #id_minimum_gap, #id_chunk_size {
+    width: 40px;
+}
+.nameLeftAlign {
+    padding-left: 2%;
+    text-align: left;
+}

@@ -50,6 +50,8 @@ class FloatRangeField(models.FloatField):
 
 class TestConfig(models.Model):
 
+    name = models.CharField(max_length=20,
+                            unique=True)
     upload = models.BooleanField()
     bytes = IntegerRangeField(default=0,
                               min_value=0,
