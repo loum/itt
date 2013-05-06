@@ -2,10 +2,10 @@
 
 #testConfigList, #testConfigAdd {
     padding-bottom: 5%;
-    height: 320px;
+    /*height: 320px;*/
 }
 #testConfigAdd {
-    height: 70px;
+    /*height: 70px;*/
 }
 #nameHead {
     padding-left: 2%;
@@ -27,4 +27,7 @@
 .nameLeftAlign {
     padding-left: 2%;
     text-align: left;
+}
+.actionHeader {
+    padding: 0;
 }
