@@ -20,57 +20,59 @@ The itt.control.testconfig index.html accessible via:
 {% block content %}
 <h1>Test Configurations</h1>
 <div id="testConfigList">
-<form action="/testconfig/update/" method="post">
-    {% csrf_token %}
-    <table>
-        <colgroup>
-            <col id="name" />
-            <col id="upload" />
-            <col id="bytes" />
-            <col id="minimum_gap" />
-            <col id="chunk_size" />
-            <col id="action_edit" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th id="nameHead">Test Name</th>
-                <th id="uploadHead">Upload</th>
-                <th id="bytesHead">Bytes</th>
-                <th id="minimum_gapHead">Minimum Gap</th>
-                <th id="chunk_sizeHead">Chunk Size</th>
-                <th id="edit_action">&nbsp;</th>
-            </tr>
-        </thead>
-        {% if test_config_list %}
-        <tbody>
-        {% for test_config in test_config_list %}
-            {% if forloop.counter|divisibleby:"2" %}
-            <tr>
-            {% else %}
-            <tr class="odd">
-            {% endif %}
-                <td class="nameLeftAlign">{{ test_config.name }}</td>
-                <td>{{ test_config.upload }}</td>
-                <td>{{ test_config.bytes }}</td>
-                <td>{{ test_config.minimum_gap }}</td>
-                <td>{{ test_config.chunk_size }}</td>
-                <td class="actionHeader">
+<table>
+    <thead>
+        <tr>
+            <th id="nameHead">Test Name</th>
+            <th id="uploadHead">Upload</th>
+            <th id="bytesHead">Bytes</th>
+            <th id="minimum_gapHead">Minimum Gap</th>
+            <th id="chunk_sizeHead">Chunk Size</th>
+            <th id="actionsHead">&nbsp;</th>
+        </tr>
+    </thead>
+    {% if test_config_list %}
+    <tbody>
+    {% for test_config in test_config_list %}
+        {% if forloop.counter|divisibleby:"2" %}
+        <tr>
+        {% else %}
+        <tr class="odd">
+        {% endif %}
+            <td class="nameLeftAlign">{{ test_config.name }}</td>
+            <td>{{ test_config.upload }}</td>
+            <td>{{ test_config.bytes }}</td>
+            <td>{{ test_config.minimum_gap }}</td>
+            <td>{{ test_config.chunk_size }}</td>
+            <td class="actionsIcons">
+                <form class="imageForm"
+                      action="/testconfig/update/" method="post">
+                    {% csrf_token %}
                     <input type="image"
                            name="submit"
                            value="test_config_edit_pk_{{ test_config.pk }}"
                            src="/static/images/itt_edit.png"
                            alt="Test Config Edit"/ >
-                </td>
-            </tr>
-        {% endfor %}
-        {% else %}
-            <tr>
-                <td colspan="6"><i>No test configurations available</i></td>
-            </tr>
-        {% endif %}
-        </tbody>
-    </table>
-</form>
+                </form>
+                <form class="imageForm"
+                      action="/testconfig/delete/" method="post">
+                    {% csrf_token %}
+                    <input type="image"
+                           name="submit"
+                           value="test_config_del_pk_{{ test_config.pk }}"
+                           src="/static/images/itt_delete.png"
+                           alt="Test Config Delete"/ >
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="6"><i>No test configurations available</i></td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
 </div> <!-- testConfigList -->
 
 <h1>Add Test Configurations</h1>

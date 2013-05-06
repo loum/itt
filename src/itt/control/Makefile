@@ -32,7 +32,7 @@ TEST=
 #	$(PY) setup.py sdist
 
 docs:
-	PYTHONPATH=$(PYTHONPATH) \
+	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
 	DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) \
 	sphinx-build -b html ./doc/source ./doc/build
 
