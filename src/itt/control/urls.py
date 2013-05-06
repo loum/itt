@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'^server/$', 'server.views.index'),
     url(r'^server/insert', 'server.views.insert'),
     url(r'^testconfig/$', 'test_config.views.index'),
+    url(r'^testconfig/update/$', 'test_config.views.update'),
     url(r'^test/', include(node_resource.urls)),
     url(r'^test/', include(checkpoint_resource.urls)),
 

@@ -74,12 +74,23 @@ class TestConfig(models.Model):
         >>> for test_config in test_config_list:
         ...     test_config.get_fields()
         ...
-        [('id', u'1'), ('upload', u'True') ...]
+        {'id': u'1', 'upload': True, ...]
+
+        .. note::
+
+            The method will honor Python's ``bool`` values.  For example,
+            a value of "False" will represent ``bool`` ``False``.
 
         **Returns:**
-            list of tuples representing the (key, value) pair of the
-            TestConfig model object.
+            ``dict`` object representing the TestConfig model object's
+            name, value pair. 
 
         """
-        return [(f.name,
-                 f.value_to_string(self)) for f in TestConfig._meta.fields]
+        d = dict((f.name,
+                  f.value_to_string(self)) for f in TestConfig._meta.fields)
+
+        for key in d:
+            if d[key] == 'False' or d[key] == 'True':
+                d[key] = d[key] == 'True'
+
+        return d
