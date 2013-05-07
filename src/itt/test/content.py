@@ -67,7 +67,6 @@ class TestContent(object):
 
         return self._bytes
 
-
     @bytes.setter
     def bytes(self, value):
         if not self.static:
