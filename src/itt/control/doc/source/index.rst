@@ -69,6 +69,54 @@ preparint the environment for you::
    :members:
    :show-inheritance:
 
+:mod:`itt.control.server` -- Modules
+------------------------------------
+ .. automodule:: itt.control.server
+
+:mod:`itt.control.server.views` -- The ITT Server View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.server.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.server.models` -- The ITT Server Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.server.models
+   :members:
+   :show-inheritance:
+
+:mod:`itt.control.config` -- Modules
+------------------------------------
+ .. automodule:: itt.control.config
+
+:mod:`itt.control.config.views` -- The ITT Config View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.config.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.config.models` -- The ITT Config Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.config.models
+   :members:
+   :show-inheritance:
+
+:mod:`itt.control.test_config` -- Modules
+-----------------------------------------
+ .. automodule:: itt.control.test_config
+
+:mod:`itt.control.test_config.views` -- The ITT Test Config View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.test_config.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.test_config.models` -- The ITT Test Config Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.test_config.models
+   :members:
+   :show-inheritance:
+
 Indices and tables
 ==================
 

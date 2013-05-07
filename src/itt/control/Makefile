@@ -32,19 +32,18 @@ TEST=
 #	$(PY) setup.py sdist
 
 docs:
-	PYTHONPATH=$(PYTHONPATH) \
+	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
 	DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) \
 	sphinx-build -b html ./doc/source ./doc/build
 
 init:
-	$(PY) $(DJANGO_INIT)
+	PYTHONPATH=$(PYTHONPATH) $(PY) $(DJANGO_INIT)
 
-test: django_test
-
-clean:
-	find . -type f -name "*.pyc" -exec rm {} \;
-	$(PY) $(DJANGO_CLEAN)
-
-django_test:
+test:
 	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) \
 	$(DJANGO_TEST) --verbosity=2 $(TEST)
+
+clean:
+	git clean -xdf
+
+.PHONY: test

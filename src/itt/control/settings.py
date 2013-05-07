@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     'test',
     'config',
     'server',
+    'test_config',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -160,3 +161,6 @@ LOGGING = {
         },
     }
 }
+
+# Temporary hack to server the ITT documentation via the Django test server.
+STATIC_DOC_ROOT = '../doc/build'

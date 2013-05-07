@@ -8,9 +8,10 @@ from config.models import Config
 from config.forms import ConfigForm
 from server.models import Server
 
+
 def index(request, config_id=1):
     """Present a form that allows the ITT instance configuration settings
-    to be modified. 
+    to be modified.
     """
     config = Config.objects.get(id=config_id)
 
@@ -20,6 +21,7 @@ def index(request, config_id=1):
         response = _index_get(request, config)
 
     return response
+
 
 def _index_post(request, config):
     """
@@ -47,6 +49,7 @@ def _index_post(request, config):
 
     return HttpResponseRedirect('/config/')
 
+
 def _index_get(request, config):
     """
     """
@@ -60,6 +63,7 @@ def _index_get(request, config):
                        'server_list': server_list})
 
     return HttpResponse(t.render(c))
+
 
 def _server_control(type, action):
     """
