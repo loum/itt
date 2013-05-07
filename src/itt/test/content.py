@@ -7,6 +7,8 @@ __all__ = [
 
 from itt.utils.log import class_logging
 
+import os
+
 
 @class_logging
 class TestContent(object):
@@ -26,18 +28,24 @@ class TestContent(object):
 
     .. attribute: static
 
-        Property getter/setter that defines the nature in which the
+        Property getter that defines the nature in which the
         content is generated.  If ``True``, the content is taken from a
         static source and guarantees consistency across invocations.  If
         ``False``, the content is generated randomly.
 
+    .. attribute: bytes
+
+        Property getter/setter that defines the size of the content in
+        bytes.  The setter is only valid for random data (that is, if 
+        *filename* is ``None``).
+
     """
     def __init__(self,
                  filename,
-                 static=True):
+                ):
         """
         """
-        self._static = static
+        self.filename = filename
 
     @property
     def filename(self):
@@ -49,8 +57,56 @@ class TestContent(object):
 
     @property
     def static(self):
-        return self._static
+        return self.filename is not None
 
-    @static.setter
-    def static(self, value):
-        self._static = value
+    @property
+    def bytes(self):
+        if self.static:
+            ##  Check file for up-to-date size
+            self._bytes = int(os.path.getsize(self.filename))
+
+        return self._bytes
+
+    @bytes.setter
+    def bytes(self, value):
+        if not self.static:
+            self._bytes = value
+
+    def open(self):
+        """Opens the file (does nothing on a random data stream)."""
+
+        if self.static:
+            self._file = open(self.filename, "rb")
+
+    def read(self):
+        """Reads & returns the file from the current cursor position to
+        ``EOF``, or if the content is a random data stream then return
+        *self.bytes* of random data.
+        """
+
+        if self.static:
+            return self._file.read()
+        else:
+            return os.urandom(self.bytes)
+
+    def read(self, bytes):
+        """Reads & returns *bytes* of data from the file from the
+        current cursor position (unless ``EOF`` is reached first), or
+        if the content is a random data stream then return *bytes* of
+        random data.
+
+        **Args:**
+
+            bytes (int): Amount of data to return (unless ``EOF`` reached)
+        """
+
+        if self.static:
+            return self._file.read(bytes)
+        else:
+            return os.urandom(bytes)
+
+    def close(self):
+        """Closes the file (does nothing on a random data stream)."""
+
+        if self.static:
+            self._file.close()
