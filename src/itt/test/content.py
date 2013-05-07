@@ -71,3 +71,42 @@ class TestContent(object):
     def bytes(self, value):
         if not self.static:
             self._bytes = value
+
+    def open(self):
+        """Opens the file (does nothing on a random data stream)."""
+
+        if self.static:
+            self._file = open(self.filename, "rb")
+
+    def read(self):
+        """Reads & returns the file from the current cursor position to
+        ``EOF``, or if the content is a random data stream then return
+        *self.bytes* of random data.
+        """
+
+        if self.static:
+            return self._file.read()
+        else:
+            return os.urandom(self.bytes)
+
+    def read(self, bytes):
+        """Reads & returns *bytes* of data from the file from the
+        current cursor position (unless ``EOF`` is reached first), or
+        if the content is a random data stream then return *bytes* of
+        random data.
+
+        **Args:**
+
+            bytes (int): Amount of data to return (unless ``EOF`` reached)
+        """
+
+        if self.static:
+            return self._file.read(bytes)
+        else:
+            return os.urandom(bytes)
+
+    def close(self):
+        """Closes the file (does nothing on a random data stream)."""
+
+        if self.static:
+            self._file.close()
