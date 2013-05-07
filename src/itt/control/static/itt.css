@@ -1,3 +1,5 @@
+@import url('/static/itt_nav.css');
+
 #header {
     background-color: #9900cc;
     height: 52px;
@@ -87,32 +89,4 @@ tfoot td {
 }
 .odd {
     background-color: #f1f1f1;
-}
-
-#nav {
-    font-size: 1.2em;
-    margin-left: auto;
-    margin-right: auto;
-    height: 1.8em;
-    border-bottom: thin solid #ccc;
-    background: #f2f2f2;
-    box-shadow: 0 0 8px #888;
-}
-#nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    float: left;
-}
-#nav ul li {
-    float: left;
-}
-#nav ul a {
-    font-weight: bold;
-    display: block;
-    padding: 0.3em 1.5em;
-    text-decoration: none;
-}
-#nav ul a:hover {
-    color: #f9cb00;
 }

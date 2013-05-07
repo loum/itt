@@ -8,7 +8,7 @@
                      type="text/css" />{% endblock %}
 </head>
 
-<body>
+{% block body_tag %}<body id="config">{% endblock %}
 
 <div id="header">
     <img src="/static/images/softel_logo.png" alt="Softel Systems">
@@ -16,12 +16,12 @@
 </div> <!-- header -->
 
 {% block nav %}<div id="nav">
-    <ul>
-        <li><a href="/config">C o n f i g</a></li>
-        <li><a href="/server">S e r v e r s</a></li>
-        <li><a href="/testconfig">T e s t s</a></li>
-        <li><a href="/config">C l i e n t s</a></li>
-        <li><a href="/config">C h e c k p o i n t s</a></li>
+    <ul id="mainNav">
+        <li class="config"><a href="/config">Config</a></li>
+        <li class="servers"><a href="/server">Servers</a></li>
+        <li class="testconfig"><a href="/testconfig">Tests</a></li>
+        <li><a href="/config">Clients</a></li>
+        <li><a href="/config">Checkpoints</a></li>
     </ul>
 </div> <!-- nav -->{% endblock %}
 
