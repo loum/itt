@@ -142,7 +142,7 @@ class TestConfig(object):
                 raise Exception(msg)
 
             if value > 0:
-                self._bytes = value
+                self._bytes = int(value)
             else:
                 ## XXX: throw a proper ITT exception?
                 msg = "Invalid content size (bytes) (must be > 0)"
@@ -225,7 +225,7 @@ class TestConfig(object):
                 raise Exception(msg)
 
             if value > 0:
-                self._chunk_size = value
+                self._chunk_size = int(value)
             else:
                 ## XXX: throw a proper ITT exception?
                 msg = "Invalid chunk size (must be > 0)"
