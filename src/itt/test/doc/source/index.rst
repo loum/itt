@@ -35,6 +35,8 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automethod:: itt.test.content.TestContent.__init__
+.. automethod:: itt.test.content.TestContent.open
+.. automethod:: itt.test.content.TestContent.read
 
 Indices and tables
 ==================

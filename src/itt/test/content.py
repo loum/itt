@@ -19,21 +19,21 @@ class TestContent(object):
         All public attribute access is implemented in a Pythonic property
         decorator style.
 
-    .. attribute: filename
+    .. attribute:: filename
 
         Property getter/setter that defines whether the test content
         resource is file based or dynamic.  A *filename* not equal to
         ``None`` implies a file-based resource with the *filename* value
         assuming the name of the file.
 
-    .. attribute: static
+    .. attribute:: static
 
         Property getter that defines the nature in which the
         content is generated.  If ``True``, the content is taken from a
         static source and guarantees consistency across invocations.  If
         ``False``, the content is generated randomly.
 
-    .. attribute: bytes
+    .. attribute:: bytes
 
         Property getter/setter that defines the size of the content in
         bytes.  The setter is only valid for random data (that is, if 
