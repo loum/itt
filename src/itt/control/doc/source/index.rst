@@ -117,6 +117,22 @@ preparint the environment for you::
    :members:
    :show-inheritance:
 
+:mod:`itt.control.test_content` -- Modules
+------------------------------------------
+ .. automodule:: itt.control.test_content
+
+:mod:`itt.control.test_content.views` -- The ITT Test Content View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.test_content.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.test_content.models` -- The ITT Test Content Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. automodule:: itt.control.test_content.models
+   :members:
+   :show-inheritance:
+
 Indices and tables
 ==================
 
