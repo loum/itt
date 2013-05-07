@@ -10,3 +10,4 @@ from itt.server.httpserver import HttpServer
 from itt.server.httprequesthandler import HttpRequestHandler
 from itt.server.config import ServerConfig
 from itt.test.config import TestConfig
+from itt.test.content import TestContent

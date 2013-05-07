@@ -21,6 +21,21 @@
 
 .. automethod:: itt.test.config.TestConfig.__init__
 
+:mod:`itt.test.content` - ITT Test Content
+------------------------------------------
+
+.. autodata:: itt.test.content
+
+:mod:`itt.test.content` - attributes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autodata:: itt.test.content.TestContent
+
+:mod:`itt.test.content` - methods
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automethod:: itt.test.content.TestContent.__init__
+
 Indices and tables
 ==================
 
