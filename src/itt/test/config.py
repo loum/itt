@@ -21,11 +21,6 @@ class TestConfig(object):
         All public attribute access is implemented in a Pythonic property
         decorator style.
 
-    .. attribute:: upload
-
-        ``bool`` value which flags the test case for upload (from the
-        perspective of the client).  Defaults to ``False``.
-
     .. attribute:: minimum_gap
 
         Defines the minimum gap between chunks of data, in seconds.
@@ -38,31 +33,18 @@ class TestConfig(object):
     """
 
     def __init__(self,
-                 upload=False,
                  minimum_gap=None,
                  chunk_size=None,
     ):
         ##  properties
-        self.upload = upload
         self.minimum_gap = minimum_gap
         self.chunk_size = chunk_size
 
     def __repr__(self):
-        return "<TestConfig upload:%s minimum_gap:%s chunk_size:%s>" % (
-            self.upload,
+        return "<TestConfig minimum_gap:%s chunk_size:%s>" % (
             self.minimum_gap,
             self.chunk_size,
         )
-
-    ##--upload
-    @property
-    def upload(self):
-        return self._upload
-
-    @upload.setter
-    @bool_check
-    def upload(self, value):
-        self._upload = value
 
     ##--minimum_gap
     @property
