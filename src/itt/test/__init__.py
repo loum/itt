@@ -10,7 +10,7 @@ from itt.utils.log import log, class_logging
 
 
 @class_logging
-class Test():
+class Test(object):
     """IP Test Tool base test class.
 
     Current thinking (at 2013-05-07):
