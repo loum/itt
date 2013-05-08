@@ -4,7 +4,7 @@ import os.path
 import time
 
 import itt
-from utils.files import dummy_filesystem
+from itt.utils.files import dummy_filesystem
 
 class TestTftpClient(unittest2.TestCase):
 

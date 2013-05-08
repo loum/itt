@@ -5,37 +5,36 @@
 
 :mod:`itt.utils` --- ITT Generic Utils
 ======================================
-
 .. automodule:: itt.utils
     :synopsis: Generic library of day-to-day utilities
-
 
 This module defines the following items:
 
 :mod:`itt.utils.files`
 ----------------------
-
 .. automodule:: itt.utils.files
     :members:
 
 :mod:`itt.utils.log`
 --------------------
-
 .. automodule:: itt.utils.log
     :members:
 
+:mod:`itt.utils.typer`
+----------------------
+.. automodule:: itt.utils.typer
+    :members:
+
 Classes
--------
+=======
 
 :class:`itt.utils.Daemon`
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
+-------------------------
 .. autoclass:: itt.utils.Daemon
     :members:
 
 :class:`DaemonError`
 ^^^^^^^^^^^^^^^^^^^^
-
 .. autoclass:: itt.utils.DaemonError
     :members:
 
@@ -45,4 +44,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

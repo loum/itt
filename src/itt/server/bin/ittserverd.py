@@ -5,8 +5,7 @@ import sys
 
 import itt
 
-# TODO - support for status check
-#      - support for "all" server action
+# TODO - support for "all" server action
 
 def main():
     parser = argparse.ArgumentParser(description='ittserverd')
@@ -35,6 +34,12 @@ def main():
         daemon.stop()
     elif args.action == "restart":
         daemon.restart()
+    elif args.action == "status":
+        if daemon.status():
+            print '%s is running with PID: %d' % (args.server_type,
+                                                  daemon.pid)
+        else:
+            print '%s is not running' % args.server_type
 
 if __name__ == "__main__":
     main()
