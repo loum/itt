@@ -14,8 +14,6 @@ import socket
 import urlparse
 import os
 
-from types import *
-
 import itt
 from itt.utils.log import log, class_logging
 
