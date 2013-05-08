@@ -14,8 +14,7 @@ def index(request):
     if request.method == 'POST':
         response = _index_post(request)
     else:
-        test_config_list = TestConfig.objects.all()
-        response = _index_get(request, test_config_list)
+        response = _index_get(request)
 
     return response
 
@@ -89,9 +88,10 @@ def _index_post(request):
     return HttpResponseRedirect('/testconfig/')
 
 
-def _index_get(request, test_config_list):
+def _index_get(request):
     """
     """
+    test_config_list = TestConfig.objects.all()
     t = loader.get_template('test_config/index.html')
 
     form = TestConfigForm()
