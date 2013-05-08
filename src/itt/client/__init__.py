@@ -19,13 +19,12 @@ class Client(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, config=None):
+    def __init__(self, test=None):
         """Client class initialisation.
         """
         self._client = None
 
-        if config is not None:
-            self.config = config
+        self.test = test
 
     @property
     def client(self):
@@ -36,23 +35,16 @@ class Client(object):
         self._client = value
 
     @property
-    def config(self):
-        return self._config
+    def test(self):
+        return self._test
 
-    @config.setter
-    def config(self, value):
-        ##  Expect an itt.TestConfig object for config
-        if type(value) is not itt.TestConfig:
-            ##  XXX: Throw an ITT exception properly
-            msg = "Expected an itt.TestConfig object for 'config'"
-            log.error(msg)
-            raise Exception(msg)
-        else:
-            self._config = value
+    @test.setter
+    def test(self, value):
+        self._test = value
 
     @abstractmethod
-    def download(self, remotename, localname=None): pass
+    def download(self): pass
 
     @abstractmethod
-    def upload(self, localname, remotename=None): pass
+    def upload(self): pass
 
