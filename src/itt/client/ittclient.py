@@ -11,8 +11,6 @@ sys.path.insert(0, "../..")
 import optparse
 import time
 
-from types import *
-
 import itt
 from itt.utils.log import log, class_logging
 
@@ -22,7 +20,7 @@ class IttClient(object):
     def __init__(self):
         self.upload = None
     
-    def parseArgs(self):
+    def parse_args(self):
         ONE_MEGABYTE=1048576
 
         parser = optparse.OptionParser(
@@ -88,7 +86,7 @@ class IttClient(object):
             log.error(msg)
             raise Exception(msg)
 
-        if type(self.opts.port) is NoneType:
+        if self.opts.port is None:
             ##  XXX: Throw an ITT exception properly
             msg = "ITT client needs to be told a port number"
             log.error(msg)
@@ -99,25 +97,33 @@ class IttClient(object):
             self.opts.size = None
 
 
-    def getTestConfig(self):
+    def get_test_config(self):
         config = itt.TestConfig(
-            self.opts.host, self.opts.port, self.opts.protocol,
-            upload=self.upload,
-            bytes=self.opts.size,
-            content=self.opts.content,
             chunk_size=self.opts.chunk_size,
             minimum_gap=self.opts.minimum_gap,
         )
         return config
 
+    def get_test_content(self):
+        content = itt.TestContent(
+            bytes=self.opts.size,
+            content=self.opts.content,
+        )
+        return content
 
-    def getTestClient(self, config):
-        if config.protocol == "http":
-            client = itt.HttpClient(config)
-        elif config.protocol == "ftp":
-            client = itt.FtpClient()
-        elif config.protocol == "tftp":
-            client = itt.TftpClient()
+    def get_test_connection(self):
+        connection = itt.TestConnection(
+            self.opts.host, self.opts.port, self.opts.protocol,
+        )
+        return connection
+
+    def get_test_client(self, test):
+        if connection.protocol == "http":
+            client = itt.HttpClient(test)
+        elif connection.protocol == "ftp":
+            client = itt.FtpClient(test)
+        elif connection.protocol == "tftp":
+            client = itt.TftpClient(test)
         else:
             msg = "Invalid protocol"
             log.error(msg)
@@ -128,14 +134,18 @@ class IttClient(object):
 
 if __name__ == '__main__':
 
-    myClient = IttClient()
-    myClient.parseArgs()
+    cliClient = IttClient()
+    cliClient.parse_args()
 
-    testConfig = myClient.getTestConfig()
+    testConfig = cliClient.get_test_config()
+    testContent = cliClient.get_test_content()
+    testConnection = cliClient.get_test_connect()
 
-    testClient = myClient.getTestClient(testConfig)
+    theTest = Test(testConfig, testContent, testConnection)
+
+    theClient = cliClient.get_test_client(theTest)
     
-    if testConfig.upload:
-        testClient.upload()
+    if self.upload:
+        theClient.upload()
     else:
-        testClient.download()
+        theClient.download()
