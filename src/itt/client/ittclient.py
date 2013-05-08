@@ -52,9 +52,9 @@ class IttClient(object):
             help='Size of the content to be sent in bytes (applicable to random content only) [default: %default]',
         )
 
-        parser.add_option('-c', '--content',
+        parser.add_option('-f', '--filename',
             default=None,
-            help='Content to upload or download (optional: if omitted, then random content will be used)',
+            help='File to upload or download (optional: if omitted, then random data will be used)',
         )
 
         parser.add_option('-g', '--minimum_gap',
@@ -92,8 +92,8 @@ class IttClient(object):
             log.error(msg)
             raise Exception(msg)
 
-        if self.opts.content is not None:
-            ##  Size doesn't matter if content is specified
+        if self.opts.filename is not None:
+            ##  Size doesn't matter if filename is specified
             self.opts.size = None
 
 
@@ -107,7 +107,7 @@ class IttClient(object):
     def get_test_content(self):
         content = itt.TestContent(
             bytes=self.opts.size,
-            content=self.opts.content,
+            filename=self.opts.filename,
         )
         return content
 
@@ -118,11 +118,11 @@ class IttClient(object):
         return connection
 
     def get_test_client(self, test):
-        if connection.protocol == "http":
+        if test.connection.protocol == "http":
             client = itt.HttpClient(test)
-        elif connection.protocol == "ftp":
+        elif test.connection.protocol == "ftp":
             client = itt.FtpClient(test)
-        elif connection.protocol == "tftp":
+        elif test.connection.protocol == "tftp":
             client = itt.TftpClient(test)
         else:
             msg = "Invalid protocol"
@@ -139,13 +139,13 @@ if __name__ == '__main__':
 
     testConfig = cliClient.get_test_config()
     testContent = cliClient.get_test_content()
-    testConnection = cliClient.get_test_connect()
+    testConnection = cliClient.get_test_connection()
 
-    theTest = Test(testConfig, testContent, testConnection)
+    theTest = itt.Test(testConfig, testContent, testConnection)
 
     theClient = cliClient.get_test_client(theTest)
     
-    if self.upload:
+    if cliClient.upload:
         theClient.upload()
     else:
         theClient.download()
