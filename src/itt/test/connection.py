@@ -45,9 +45,9 @@ class TestConnection(object):
         ]
 
         ##  properties
-        self.host = host
-        self.port = port
-        self.protocol = protocol
+        self.host = str(host)
+        self.port = int(port)
+        self.protocol = str(protocol)
 
     def __repr__(self):
         return "<TestConnection host:%s port:%s protocol:%s>" % (
