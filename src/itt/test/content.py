@@ -52,6 +52,12 @@ class TestContent(object):
         """
         self.filename = filename
 
+        ##  Avoids typer.py throwing "TypeError: expecting a int value
+        if bytes is not None:
+            self.bytes = int(bytes)
+        else:
+            self._bytes = None
+
     @property
     def filename(self):
         return self._filename
