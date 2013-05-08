@@ -72,7 +72,7 @@ class TestTestConfigViews(TransactionTestCase):
         tc_before_update = TestConfig.objects.get(name='test from fixture')
 
         # Upload.
-        msg = 'TestConfig "upload" after update should be "False"'
+        msg = 'TestConfig "upload" before update should be "False"'
         self.assertFalse(tc_before_update.upload, msg)
 
         request_post = {u'name': [u'test from fixture'],

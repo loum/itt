@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% comment %}
+The itt.control.testcontent update.html accessible via:
+
+    http://<hostname><:itt_port>/testcontent/update
+
+    Variables:
+        test_content_list (itt.control.test_content.TestContent): direct
+        reference to the list of itt.control.test_content.TestContent
+        objects.
+
+{% endcomment %}
+
+{% block css %}
+<link href="{{ STATIC_URL }}test_content.css"
+      rel="stylesheet"
+      type="text/css" />
+{% endblock %}
+
+{% block body_tag %}<body id="testcontent">{% endblock %}
+
+{% block title %}IP Test Tool Test Content Update{% endblock %}
+
+{% block content %}
+<h1>Test Content Update</h1>
+<div id="testContentList">
+<form action="/testcontent/" method="post">
+    {% csrf_token %}
+    <table>
+        <colgroup>
+            <col id="name" />
+            <col id="static" />
+            <col id="bytes" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th id="nameHead">Test Name</th>
+                <th id="staticHead">Static File?</th>
+                <th id="bytesHead">Content Size (bytes)</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td colspan="3">
+                    <input type="submit"
+                           name="submit"
+                           value="Update Test Content">
+                    </input>
+                    <input type="reset" value="Reset"></input>
+                    <input type="submit"
+                           name="cancel"
+                           value="Cancel">
+                </td>
+            </tr>
+        </tfoot>
+        <tbody>
+            <tr>
+                <td class="nameLeftAlign">{{ form.name }}</td>
+                <td>{{ form.static }}</td>
+                <td>{{ form.bytes }}</td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+</div> <!-- testContentList -->
+{% endblock %} {# content #}

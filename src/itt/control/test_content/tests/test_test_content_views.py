@@ -6,6 +6,8 @@ from test_content.models import TestContent
 
 class TestTestContentViews(TransactionTestCase):
 
+    fixtures = ['test_test_content']
+
     @classmethod
     def setUpClass(cls):
         cls._c = Client()
@@ -21,7 +23,7 @@ class TestTestContentViews(TransactionTestCase):
     def test_post_no_values(self):
         """Post an empty request to the TestContent index.html.
         """
-        request_post = {u'submit': ['Add Content'], }
+        request_post = {u'submit': ['Add Test Content'], }
         with self.assertRaises(ValueError):
             self._c.post('/testcontent/', request_post)
 
@@ -46,6 +48,39 @@ class TestTestContentViews(TransactionTestCase):
         # Bytes.
         expected = 0
         msg = '"TestConfig.bytes" after insert should be %s' % expected
+        self.assertEqual(tc.bytes, expected, msg)
+
+    def test_post_update_ok_values(self):
+        """POST to the TestContent update.html (Update Test Config).
+        """
+        # Check that the "bytest" field equals 1024 before the update.
+        tc_before_update = TestContent.objects.get(name='test from fixture')
+
+        # Bytes.
+        expected = 1024
+        msg = '"TestContent.bytes" before update should be 1024'
+        self.assertEqual(tc_before_update.bytes, expected, msg)
+
+        # Prepare the update data.
+        request_post = {u'name': [u'test from fixture'],
+                        u'static': [u'on'],
+                        u'bytes': [u'2048'],
+                        u'submit': [u'Update Test Content'], }
+
+        response = self._c.post('/testconfig/', request_post)
+        msg = 'TestConfig index.html POST status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
+        # Check the database directly.
+        tc = TestContent.objects.get(name='test from fixture')
+
+        # Static.
+        msg = '"TestContent.static" after update should be True'
+        self.assertTrue(tc.static, msg)
+
+        # Bytes.
+        expected = 2048
+        msg = '"TestContent.bytes" after update should be 2048'
         self.assertEqual(tc.bytes, expected, msg)
 
     @classmethod

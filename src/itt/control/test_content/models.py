@@ -8,10 +8,8 @@ from common.models import (CommonModel,
 class TestContent(CommonModel):
 
     name = models.CharField(max_length=20,
-                            unique=True,
-                           )
+                            unique=True, )
     static = models.BooleanField()
     bytes = IntegerRangeField(default=0,
                               min_value=0,
-                              validators=[MinValueValidator(0)],
-                             )
+                              validators=[MinValueValidator(0)], )
