@@ -1,21 +1,53 @@
+""":mod:`itt.test` encapsulates the settings that make up a ITT test
+   case: *TestConfig*, *TestConnection*, and *TestContent*.
+"""
+
 __all__ = [
     "Test",
 ]
 
-from abc import ABCMeta, abstractmethod
+from itt.utils.log import log, class_logging
 
 
+@class_logging
 class Test():
     """IP Test Tool base test class.
 
-    I'm not sure exactly how I'll use this just yet.
-    It might be abstract, or it might not.
-
-    Loose idea at the moment:
-    t = itt.Test(itt.test.config)
+    Current thinking (at 2013-05-07):
+    t = itt.Test(itt.test.config, itt.test.content, itt.test.connection)
     t.execute()
     t.reportRestuls()
     """
-    __metaclass__ = ABCMeta
 
-    pass
+    def __init__(self, config, content, connection):
+
+        self.config = config
+        self.content = content
+        self.connection = connection
+
+
+    ##--properties
+
+    @property
+    def config(self):
+        return self._config
+
+    @config.setter
+    def config(self, value):
+        self._config = value
+
+    @property
+    def content(self):
+        return self._content
+
+    @content.setter
+    def content(self, value):
+        self._content = value
+
+    @property
+    def connection(self):
+        return self._connection
+
+    @connection.setter
+    def connection(self, value):
+        self._connection = value
