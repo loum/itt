@@ -6,6 +6,10 @@ __all__ = [
 ]
 
 from itt.utils.log import class_logging
+from itt.utils.typer import (bool_check,
+                             int_check,
+                             float_check,
+                             not_none_check)
 
 import os
 
@@ -42,6 +46,7 @@ class TestContent(object):
     """
     def __init__(self,
                  filename,
+                 bytes=None,
                 ):
         """
         """
@@ -61,14 +66,17 @@ class TestContent(object):
 
     @property
     def bytes(self):
+        ##  If it's a real file (not random data) then, check file for
+        ##  up-to-date size
         if self.static:
-            ##  Check file for up-to-date size
             self._bytes = int(os.path.getsize(self.filename))
 
         return self._bytes
 
     @bytes.setter
+    @int_check(greater_than=0)
     def bytes(self, value):
+        ##  Only set if we're using random data
         if not self.static:
             self._bytes = value
 
