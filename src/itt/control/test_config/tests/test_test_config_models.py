@@ -31,5 +31,5 @@ class TestTestConfigModels(TransactionTestCase):
         """Test TestConfig.chunk_size field minimum value.
         """
         test_config = TestConfig(chunk_size=-1)
-        #with self.assertRaises(ValidationError):
-        test_config.clean_fields()
+        with self.assertRaises(ValidationError):
+            test_config.clean_fields()
