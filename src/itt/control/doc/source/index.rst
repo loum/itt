@@ -158,6 +158,25 @@ preparint the environment for you::
    :members:
    :show-inheritance:
 
+:mod:`itt.control.test_connection` -- Modules
+---------------------------------------------
+
+ .. automodule:: itt.control.test_connection
+
+:mod:`itt.control.test_connection.views` -- The ITT Test Connection View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: itt.control.test_connection.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.test_connection.models` -- The ITT Test Connection Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: itt.control.test_connection.models
+   :members:
+   :show-inheritance:
+
 Indices and tables
 ==================
 
