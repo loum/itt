@@ -110,7 +110,6 @@ class TestTestConfigViews(TransactionTestCase):
 
         # Now delete it.
         request_post = {u'submit': [u'test_config_del_pk_%d' % instance.pk]}
-
         response = self._c.post('/testconfig/delete/', request_post)
         msg = 'TestConfig POST to delete status_code not 302 (Redirect)'
         self.assertEqual(response.status_code, 302, msg)

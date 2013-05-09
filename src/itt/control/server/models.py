@@ -1,20 +1,12 @@
 from django.db import models
 
 import itt
+import common.utils
 
 
 class Server(models.Model):
-    FTP= 'ftp'
-    TFTP= 'tftp'
-    HTTP= 'http'
-    PROTOCOL_CHOICES = (
-        (FTP, 'FTP'),
-        (TFTP, 'TFTP'),
-        (HTTP, 'HTTP'),
-    )
-
-    protocol =  models.CharField(max_length=4,
-                                 choices=PROTOCOL_CHOICES)
+    protocol = models.CharField(max_length=4,
+                                choices=common.utils.PROTOCOL_CHOICES)
     port = models.IntegerField()
     root = models.CharField(max_length=100)
     name = models.CharField(max_length=20, unique=True)

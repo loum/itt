@@ -11,7 +11,7 @@ class TestTestConfigModels(TransactionTestCase):
         """
         test_config = TestConfig()
         msg = 'Did not receive a TestConfig object.'
-        self.assertTrue(isinstance(test_config, TestConfig), msg)
+        self.assertIsInstance(test_config, TestConfig, msg)
 
     def test_init_bytes_field_below_range(self):
         """Test TestConfig.bytes field minimum value.
