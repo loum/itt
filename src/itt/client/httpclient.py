@@ -113,15 +113,19 @@ class HttpClient(itt.Client):
             i = int(0)
             while i < bytes:
                 if chunk > 0:
+                    if (bytes - i) < chunk:
+                        bytes_to_send = (bytes - i)
+                    else:
+                        bytes_to_send = chunk
                     ##  Send only as much as we're allowed
-                    data = self.test.content.read(bytes=chunk)
+                    data = self.test.content.read(bytes=bytes_to_send)
                     if data == "":
                         ##  File was shorter than we thought?
                         break
                     
                     self.addAndSend(http, data)
 
-                    i = i + chunk
+                    i = i + bytes_to_send
                     
                     ##  Sleep for the minimum gap size
                     if i < bytes:
