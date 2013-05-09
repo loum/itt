@@ -5,6 +5,15 @@ __all__ = [
 
 import re
 
+FTP = 'ftp'
+TFTP = 'tftp'
+HTTP = 'http'
+PROTOCOL_CHOICES = (
+    (FTP, 'FTP'),
+    (TFTP, 'TFTP'),
+    (HTTP, 'HTTP'),
+)
+
 
 def parse_pk(input_value):
     """Tables in the :mod:`itt.control.test_config.views` use a input
