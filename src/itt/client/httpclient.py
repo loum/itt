@@ -14,8 +14,6 @@ import socket
 import urlparse
 import os
 
-from types import *
-
 import itt
 from itt.utils.log import log, class_logging
 
@@ -26,16 +24,16 @@ class HttpClient(itt.Client):
     def getGap(self):
         ##  Do we have minimum packet gaps?
         min_gap = float(0.0)
-        if self.config.minimum_gap is not None:
-            min_gap = float(self.config.minimum_gap)
+        if self.test.config.minimum_gap is not None:
+            min_gap = float(self.test.config.minimum_gap)
             log.info("  minimum_gap     : %s seconds" % min_gap)
         return min_gap
 
     def getChunk(self):
         ##  Do we have maximum chunk sizes?
         chunk = int(0)
-        if self.config.chunk_size is not None:
-            chunk = int(self.config.chunk_size)
+        if self.test.config.chunk_size is not None:
+            chunk = int(self.test.config.chunk_size)
             log.info("  chunk_size      : %s bytes" % chunk)
         return chunk
 
@@ -44,31 +42,29 @@ class HttpClient(itt.Client):
         try:
             log.info("HTTP client begins download (HTTP GET):")
 
-            if self.config.content is not None:
-                url_path = self.config.content
-                log.info("  content: %s" % self.config.content)
+            generated_url = ""
+
+            if self.test.content.static:
+                url_path = self.test.content.filename
+                log.info("  content: %s" % url_path)
             else:
-                url_path = "/itt/testing/dev/random"
+                url_path = "/testing/dev/random"
                 log.info("  content         : (random data)")
+                log.info("  size            : %s bytes" % self.test.content.bytes)
+                generated_url = "&bytes=%s" % (
+                    self.test.content.bytes,
+                )
 
             min_gap = self.getGap()
             chunk = self.getChunk()
 
-            generated_url = "http://%s/%s?minimum_gap=%s&chunk_size=%s" % (
-                self.config.netloc,
+            generated_url = "http://%s/%s?minimum_gap=%s&chunk_size=%s%s" % (
+                self.test.connection.netloc,
                 url_path,
                 min_gap,
                 chunk,
+                generated_url,  ##  May be set to "&bytes=x" if random data
             )
-
-            ##  Size for random data...
-            if self.config.content is None:
-                log.info("  size            : %s bytes" % self.config.bytes)
-                generated_url = "%s&bytes=%s" % (
-                    generated_url,
-                    self.config.bytes,
-                )
-
             log.info("  url             : %s" % generated_url)
 
             download = requests.get(generated_url)
@@ -82,10 +78,7 @@ class HttpClient(itt.Client):
             log.error("Download (HTTP GET) failed with a connection error: %s" % (str(e)))
 
     def upload(self):
-        HTTP_DEVNULL = "/itt/testing/dev/null"
-
-        ##  Are we sending random data?
-        random = False
+        HTTP_DEVNULL = "/testing/dev/null"
 
         ##  Size of data
         bytes = int(0)
@@ -93,28 +86,24 @@ class HttpClient(itt.Client):
         try:
             log.info("HTTP client begins upload (HTTP POST):")
             generated_url = "http://%s/%s" % (
-                self.config.netloc,
+                self.test.connection.netloc,
                 HTTP_DEVNULL,
             )
             log.info("  url             : %s" % generated_url)
 
-            if self.config.content is not None:
-                random = False
-                log.info("  content         : %s" % self.config.content)
-                ##  Open file
-                file = open(self.config.content, "rb")
-                ##  How big is it?
-                bytes = int(os.path.getsize(self.config.content))
+            if self.test.content.static:
+                log.info("  content         : %s" % self.test.content.filename)
             else:
-                random = True
                 log.info("  content         : (random data)")
-                bytes = int(self.config.bytes)
 
+            bytes = self.test.content.bytes
             log.info("  size            : %s bytes" % bytes)
 
             min_gap = self.getGap()
             chunk = self.getChunk()
 
+            ##  Open the file for sending
+            self.test.content.open()
             ##  Open HTTP connection & send headers
             http = self.setupUploadConnection(HTTP_DEVNULL)
 
@@ -123,13 +112,10 @@ class HttpClient(itt.Client):
             while i < bytes:
                 if chunk > 0:
                     ##  Send only as much as we're allowed
-                    if not random:
-                        data = file.read(chunk)
-                        if data == "":
-                            ##  File was shorter than we thought?
-                            break
-                    else:
-                        data = os.urandom(chunk)
+                    data = self.test.content.read(bytes=chunk)
+                    if data == "":
+                        ##  File was shorter than we thought?
+                        break
                     
                     self.addAndSend(http, data)
 
@@ -140,12 +126,12 @@ class HttpClient(itt.Client):
 
                 else:
                     ##  Send everything as fast as possible
-                    if not random:
-                        self.addAndSend(http, file.read())
-                    else:
-                        self.addAndSend(http, os.urandom(bytes))
+                    self.addAndSend(http, self.test.content.read())
 
                     i = i + bytes
+
+            ##  Close the file
+            self.test.content.close()
 
             ##  XXX: todo: generalise the sha1sum stuff
             shasum = hashlib.sha1(self.sent_data).hexdigest()
@@ -167,16 +153,12 @@ class HttpClient(itt.Client):
     def setupUploadConnection(self, path):
         HTTP_TIMEOUT = 20
         
-        http = httplib.HTTPConnection(self.config.netloc, timeout=HTTP_TIMEOUT)     ##  Un-hardcode timeout?
+        http = httplib.HTTPConnection(self.test.connection.netloc, timeout=HTTP_TIMEOUT)     ##  Un-hardcode timeout?
 
         http.putrequest("POST", path)
         http.putheader("content-type", "application/octet-stream")
 
-        ##  A quick note why we don't provide content-length: because we
-        ##  don't want to have to pre-calculate it.  We don't have to
-        ##  worry about progress bars, so lets leave it.
-        ##  See: http://tech.hickorywind.org/articles/2008/05/23/content-length-mostly-does-not-matter-the-reverse-bob-barker-rule
-        ##  http.putheader("content-length", len(???))
+        http.putheader("content-length", self.test.content.bytes)
 
         http.endheaders()
 
