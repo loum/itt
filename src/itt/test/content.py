@@ -80,7 +80,7 @@ class TestContent(object):
         return self._bytes
 
     @bytes.setter
-    @int_check(greater_than=0)
+    @int_check(greater_than=-1)
     def bytes(self, value):
         ##  Only set if we're using random data
         if not self.static:
