@@ -60,41 +60,47 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.path,
         ))
 
-        url = urlparse.urlparse(self.path)
-        qs = urlparse.parse_qs(url.query)
+        ##  Deal with (potential) query strings
+        if self.path.find('?') != -1:
+            path, qs = self.path.split('?')
+        else:
+            path = self.path
+            qs = ''
+        qs = urlparse.parse_qs(qs)
 
         min_gap = float(0.0)
         chunk = int(0)
         ##  Setup test configuration
         config = itt.TestConfig()
         if 'minimum_gap' in qs:
-            min_gap = qs['minimum_gap']
+            min_gap = float(qs['minimum_gap'][0])
             config.minimum_gap = min_gap
         if 'chunk_size' in qs:
-            chunk = qs['chunk_size']
+            chunk = int(qs['chunk_size'][0])
             config.chunk_size = chunk
 
         ##  Set bytes to something, overwrite in if-block below
         bytes = self.DEFAULT_BYTES
 
         ##  Check for "special" paths, otherwise try and read real files
-        if url.path == self.RANDOM_PATH:
 
-            ##  Setup test content
+        if path == self.RANDOM_PATH:
+        ##  Send random data
             if 'bytes' not in qs:
                 log.warning("Query string does not specify 'bytes', but random data requested")
                 log.warning("Using %s bytes by default" % self.DEFAULT_BYTES)
             else:
-                bytes = qs['bytes']
-
+                bytes = int(qs['bytes'][0])
             content = itt.TestContent(None, bytes=bytes)
 
-        elif url.path == self.NULL_PATH:
-            ##  Fake content
+        elif path == self.NULL_PATH:
+        ##  Send nothing
+            bytes = 0
             content = itt.TestContent(None, bytes=bytes)
+
         else:
-            ##  Fake content
-            content = itt.TestContent(None, bytes=bytes)
+        ##  Send real files from the servers' root
+            content = itt.TestContent(path)
 
         ##  connection = None, as the client has created the connection
         self.test = itt.Test(config, content, None)
@@ -123,7 +129,8 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 i = i + chunk
 
                 ##  Sleep for the minimum gap size
-                time.sleep(min_gap)
+                if i < bytes:
+                    time.sleep(min_gap)
 
             else:
                 ##  Send everything as fast as possible
