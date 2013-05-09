@@ -70,6 +70,14 @@ def _index_post(request):
     return HttpResponseRedirect('/testconnection/')
 
 
+def delete(request):
+    """
+    """
+    common.utils.delete(request, TestConnection)
+
+    return HttpResponseRedirect('/testconnection/')
+
+
 def _index_get(request):
     """
     """

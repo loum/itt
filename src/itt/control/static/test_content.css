@@ -1,7 +1,7 @@
 @import url('/static/itt.css');
 
 #testContentList, #testContentAdd {
-    padding-bottom: 5%;
+    padding-bottom: 2%;
 }
 #nameHead {
     padding-left: 2%;
@@ -19,10 +19,6 @@
 }
 #id_static, #id_bytes {
     width: 40px;
-}
-.nameLeftAlign {
-    padding-left: 2%;
-    text-align: left;
 }
 .actionsIcons {
     padding: 0;

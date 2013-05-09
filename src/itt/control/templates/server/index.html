@@ -11,6 +11,12 @@ The itt.control.config index.html accessible via:
 
 {% endcomment %}
 
+{% block css %}
+<link href="{{ STATIC_URL }}server.css"
+      rel="stylesheet"
+      type="text/css" />
+{% endblock %}
+
 {% block body_tag %}<body id="servers">{% endblock %}
 
 {% block title %}IP Test Tool Server{% endblock %}
@@ -18,16 +24,9 @@ The itt.control.config index.html accessible via:
 {% block content %}
 
 <h1>Servers</h1>
-
+<div id="serverList">
 {% if server_list %}
 <table>
-    <colgroup>
-        <col id="name" />
-        <col id="protocol" />
-        <col id="port" />
-        <col id="root" />
-        <col id="running" />
-    </colgroup>
     <thead>
         <tr>
             <th id="nameHead">Name</td>
@@ -43,14 +42,15 @@ The itt.control.config index.html accessible via:
         {% else %}
         <tr class="odd">
         {% endif %}
-            <td>{{ server.name }}</td>
+            <td class="textLeftAlign">{{ server.name }}</td>
             <td>{{ server.protocol }}</td>
             <td>{{ server.port }}</td>
-            <td>{{ server.root }}</td>
+            <td class="textLeftAlign">{{ server.root }}</td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
 {% endif %}
+</div> <!-- serverList -->
 
 {% endblock %} {# content #}
