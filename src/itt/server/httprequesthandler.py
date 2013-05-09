@@ -74,11 +74,13 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             chunk = qs['chunk_size']
             config.chunk_size = chunk
 
+        ##  Set bytes to something, overwrite in if-block below
+        bytes = self.DEFAULT_BYTES
+
         ##  Check for "special" paths, otherwise try and read real files
         if url.path == self.RANDOM_PATH:
 
             ##  Setup test content
-            bytes = self.DEFAULT_BYTES
             if 'bytes' not in qs:
                 log.warning("Query string does not specify 'bytes', but random data requested")
                 log.warning("Using %s bytes by default" % self.DEFAULT_BYTES)
@@ -88,12 +90,14 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             content = itt.TestContent(None, bytes=bytes)
 
         elif url.path == self.NULL_PATH:
-            pass
+            ##  Fake content
+            content = itt.TestContent(None, bytes=bytes)
         else:
-            pass
+            ##  Fake content
+            content = itt.TestContent(None, bytes=bytes)
 
         ##  connection = None, as the client has created the connection
-        test = itt.Test(config, content, None)
+        self.test = itt.Test(config, content, None)
 
         ##  Open the file for sending
         self.test.content.open()
