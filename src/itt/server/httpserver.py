@@ -94,6 +94,10 @@ class HttpServer(itt.Server):
         self.server = BaseHTTPServer.HTTPServer((self.bind, self.port),
                                                 self.handler)
 
+        ##  Python crazyness: setting a variable inside the server object
+        ##  that was never coded for by the Python standard lib programmers
+        self.server.root = self.root
+
         print "XXX:1"
         # Prepare the environment to handle SIGTERM.
         #signal.signal(signal.SIGTERM, self._exit_handler(self.server))
