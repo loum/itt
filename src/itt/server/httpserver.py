@@ -7,6 +7,7 @@
 ##  Hack for running HttpServer from itself; ie. python httpserver.py
 import sys
 sys.path.insert(0, "../..")
+
 import BaseHTTPServer
 import signal
 

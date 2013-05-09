@@ -19,11 +19,6 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.contentSent = self.contentSent + str
         wfile.write(str)
     
-    def do_HEAD(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-
     def do_POST(self):
         """Response to a POST request."""
         log.info("HTTP POST request received from %s on port %s for %s" % (
