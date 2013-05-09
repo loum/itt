@@ -2,11 +2,13 @@
 @author: pjay
 """
 
-import hashlib
 import BaseHTTPServer
 
+import hashlib
 import os
+import time
 import urlparse
+
 import itt
 from itt.utils.log import log, class_logging
 
@@ -61,9 +63,16 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         url = urlparse.urlparse(self.path)
         qs = urlparse.parse_qs(url.query)
 
-        self.send_response(200)
-        self.send_header("Content-type", "text/plain")
-        self.end_headers()
+        min_gap = float(0.0)
+        chunk = int(0)
+        ##  Setup test configuration
+        config = itt.TestConfig()
+        if 'minimum_gap' in qs:
+            min_gap = qs['minimum_gap']
+            config.minimum_gap = min_gap
+        if 'chunk_size' in qs:
+            chunk = qs['chunk_size']
+            config.chunk_size = chunk
 
         ##  Check for "special" paths, otherwise try and read real files
         if url.path == self.RANDOM_PATH:
@@ -78,20 +87,48 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
             content = itt.TestContent(None, bytes=bytes)
 
-            ##  Setup test configuration
-            config = itt.TestConfig()
-            if 'minimum_gap' in qs:
-                config.minimum_gap = qs['minimum_gap']
-            if 'chunk_size' in qs:
-                config.chunk_size = qs['chunk_size']
-
-        else if url.path == self.NULL_PATH:
+        elif url.path == self.NULL_PATH:
             pass
         else:
             pass
 
         ##  connection = None, as the client has created the connection
         test = itt.Test(config, content, None)
+
+        ##  Open the file for sending
+        self.test.content.open()
+
+        ##  Send headers
+        self.send_response(200)
+        self.send_header("content-type", "text/plain")
+        self.send_header("content-length", self.test.content.bytes)
+        self.end_headers()
+
+        ##  Send data
+        i = int(0)
+        while i < bytes:
+            if chunk > 0:
+                ##  Send only as much as we're allowed
+                data = self.test.content.read(bytes=chunk)
+                if data == "":
+                    ##  File was shorter than we thought?
+                    break
+
+                self.storeAndWrite(data, self.wfile)
+
+                i = i + chunk
+
+                ##  Sleep for the minimum gap size
+                time.sleep(min_gap)
+
+            else:
+                ##  Send everything as fast as possible
+                self.storeAndWrite(self.test.content.read(), self.wfile)
+
+                i = i + bytes
+
+        ##  Close the file
+        self.test.content.close()
 
         log.info("HTTP GET request finished for %s on port %s for %s\n   Resulting SHA1 sum of content: %s" % (
            self.client_address[0],
