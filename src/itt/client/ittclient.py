@@ -105,9 +105,8 @@ class IttClient(object):
         return config
 
     def get_test_content(self):
-        content = itt.TestContent(
+        content = itt.TestContent(self.opts.filename,
             bytes=self.opts.size,
-            filename=self.opts.filename,
         )
         return content
 
