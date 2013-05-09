@@ -1,9 +1,9 @@
 @import url('/static/itt.css');
 
-#testConnection, #testConnection {
-    padding-bottom: 5%;
+#testConnectionList, #testConnectionAdd {
+    padding-bottom: 2%;
 }
-#nameHead {
+#nameHead, #hostHead {
     padding-left: 2%;
     text-align: left;
     width: 30%;
@@ -22,10 +22,6 @@
 }
 #id_port {
     width: 40px;
-}
-.nameLeftAlign {
-    padding-left: 2%;
-    text-align: left;
 }
 .actionsIcons {
     padding: 0;

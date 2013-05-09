@@ -90,3 +90,7 @@ tfoot td {
 .odd {
     background-color: #f1f1f1;
 }
+.textLeftAlign {
+    padding-left: 2%;
+    text-align: left;
+}

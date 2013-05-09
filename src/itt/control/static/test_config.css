@@ -1,7 +1,7 @@
 @import url('/static/itt.css');
 
 #testConfigList, #testConfigAdd {
-    padding-bottom: 5%;
+    padding-bottom: 2%;
 }
 #nameHead {
     padding-left: 2%;
