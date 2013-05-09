@@ -2,7 +2,6 @@ from django.test import TransactionTestCase
 from django.test.client import Client
 
 from test_config.models import TestConfig
-from test_config.views import _parse_pk
 
 
 class TestTestConfigViews(TransactionTestCase):
@@ -72,7 +71,7 @@ class TestTestConfigViews(TransactionTestCase):
         tc_before_update = TestConfig.objects.get(name='test from fixture')
 
         # Upload.
-        msg = 'TestConfig "upload" after update should be "False"'
+        msg = 'TestConfig "upload" before update should be "False"'
         self.assertFalse(tc_before_update.upload, msg)
 
         request_post = {u'name': [u'test from fixture'],
@@ -104,7 +103,7 @@ class TestTestConfigViews(TransactionTestCase):
                         u'chunk_size': [u'0'],
                         u'submit': [u'Add Test Configuration'], }
         response = self._c.post('/testconfig/', request_post)
-        msg = 'TestConfig POST to inserver status_code not 302 (Redirect)'
+        msg = 'TestConfig POST to server status_code not 302 (Redirect)'
         self.assertEqual(response.status_code, 302, msg)
 
         instance = TestConfig.objects.get(name='test config delete')
@@ -113,30 +112,12 @@ class TestTestConfigViews(TransactionTestCase):
         request_post = {u'submit': [u'test_config_del_pk_%d' % instance.pk]}
 
         response = self._c.post('/testconfig/delete/', request_post)
-        msg = 'TestConfig POST to delete status_code not 301 (Redirect)'
+        msg = 'TestConfig POST to delete status_code not 302 (Redirect)'
         self.assertEqual(response.status_code, 302, msg)
 
         # Finally, check the database.
         with self.assertRaises(TestConfig.DoesNotExist):
             TestConfig.objects.get(name='test config delete')
-
-    def test_parse_pk_valid_edit_input_value(self):
-        """Valid parse of a test_config edit input value.
-        """
-        input_value = 'test_config_edit_pk_2'
-        received = _parse_pk(input_value)
-        expected = 2
-        msg = ('Primary key parse of "%s" did not return %d' %
-               (input_value, received))
-        self.assertEqual(received, expected, msg)
-
-    def test_parse_pk_invalid_edit_input_value(self):
-        """Invalid parse of a test_config edit input value.
-        """
-        input_value = 'test_config_edit_pk_'
-        received = _parse_pk(input_value)
-        msg = 'Primary key parse of "%s" did not return None' % input_value
-        self.assertIsNone(received, msg)
 
     @classmethod
     def tearDownClass(cls):

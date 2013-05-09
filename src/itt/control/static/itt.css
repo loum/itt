@@ -2,7 +2,7 @@
 
 #header {
     background-color: #9900cc;
-    height: 52px;
+    height: 36px;
 }
 #header img {
     float: left;
@@ -12,8 +12,8 @@
     position: relative;
     text-align: right;
     color: #fff;
-    font-size: 2.5em;
-    padding-top: 15px;
+    font-size: 1.5em;
+    padding-top: 8px;
     padding-right: 30px;
     border-bottom: 0;
     margin: 0;

@@ -29,7 +29,8 @@
 }
 #config #mainNav .config a,
 #servers #mainNav .servers a,
-#testconfig #mainNav .testconfig a {
+#testconfig #mainNav .testconfig a,
+#testcontent #mainNav .testcontent a {
     background-color: #9900cc;
     color: #fff;
     cursor: default;
