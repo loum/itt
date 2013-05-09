@@ -92,22 +92,16 @@ class TestContent(object):
         if self.static:
             self._file = open(self.filename, "rb")
 
-    def read(self):
-        """Reads & returns the file from the current cursor position to
-        ``EOF``, or if the content is a random data stream then return
-        *self.bytes* of random data.
-        """
-
-        if self.static:
-            return self._file.read()
-        else:
-            return os.urandom(self.bytes)
-
-    def read(self, bytes):
+    def read(self, bytes=None):
         """Reads & returns *bytes* of data from the file from the
         current cursor position (unless ``EOF`` is reached first), or
         if the content is a random data stream then return *bytes* of
         random data.
+
+        However, if *bytes* is ``None``, then read & return the file
+        from the current cursor position to ``EOF``, or if the content
+        is a random data stream then return *self.bytes* of random
+        data.
 
         **Args:**
 
@@ -115,9 +109,15 @@ class TestContent(object):
         """
 
         if self.static:
-            return self._file.read(bytes)
+            if bytes is None:
+                return self._file.read()
+            else:
+                return self._file.read(bytes)
         else:
-            return os.urandom(bytes)
+            if bytes is None:
+                return os.urandom(self.bytes)
+            else:
+                return os.urandom(bytes)
 
     def close(self):
         """Closes the file (does nothing on a random data stream)."""
