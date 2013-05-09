@@ -96,7 +96,8 @@ class HttpClient(itt.Client):
             else:
                 log.info("  content         : (random data)")
 
-            log.info("  size            : %s bytes" % self.test.content.bytes)
+            bytes = self.test.content.bytes
+            log.info("  size            : %s bytes" % bytes)
 
             min_gap = self.getGap()
             chunk = self.getChunk()
@@ -111,7 +112,7 @@ class HttpClient(itt.Client):
             while i < bytes:
                 if chunk > 0:
                     ##  Send only as much as we're allowed
-                    data = self.test.content.read(chunk)
+                    data = self.test.content.read(bytes=chunk)
                     if data == "":
                         ##  File was shorter than we thought?
                         break
