@@ -52,6 +52,7 @@ def delete(request):
 
     return HttpResponseRedirect('/testcontent/')
 
+
 def _index_get(request):
     """
     """

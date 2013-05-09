@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^testconfig/$', 'test_config.views.index'),
     url(r'^testconfig/update/$', 'test_config.views.update'),
     url(r'^testconfig/delete/$', 'test_config.views.delete'),
+    url(r'^testconnection/$', 'test_connection.views.index'),
     url(r'^test/', include(node_resource.urls)),
     url(r'^test/', include(checkpoint_resource.urls)),
 
