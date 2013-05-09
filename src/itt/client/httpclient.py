@@ -42,7 +42,7 @@ class HttpClient(itt.Client):
         try:
             log.info("HTTP client begins download (HTTP GET):")
 
-            generated_url = ""
+            bytes_qs = ""
 
             if self.test.content.static:
                 url_path = self.test.content.filename
@@ -51,19 +51,21 @@ class HttpClient(itt.Client):
                 url_path = "/testing/dev/random"
                 log.info("  content         : (random data)")
                 log.info("  size            : %s bytes" % self.test.content.bytes)
-                generated_url = "&bytes=%s" % (
+                bytes_qs = "&bytes=%s" % (
                     self.test.content.bytes,
                 )
 
             min_gap = self.getGap()
             chunk = self.getChunk()
 
-            generated_url = "http://%s/%s?minimum_gap=%s&chunk_size=%s%s" % (
-                self.test.connection.netloc,
-                url_path,
-                min_gap,
-                chunk,
-                generated_url,  ##  May be set to "&bytes=x" if random data
+            generated_url = urlparse.urljoin(
+                "http://%s" % self.test.connection.netloc,
+                "%s?minimum_gap=%s&chunk_size=%s%s" % (
+                    url_path,
+                    min_gap,
+                    chunk,
+                    bytes_qs,  ##  May be set to "&bytes=x" if random data
+                ),
             )
             log.info("  url             : %s" % generated_url)
 
@@ -122,7 +124,8 @@ class HttpClient(itt.Client):
                     i = i + chunk
                     
                     ##  Sleep for the minimum gap size
-                    time.sleep(min_gap)
+                    if i < bytes:
+                        time.sleep(min_gap)
 
                 else:
                     ##  Send everything as fast as possible
