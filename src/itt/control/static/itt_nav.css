@@ -30,6 +30,7 @@
 #servers #mainNav .servers a,
 #testconfig #mainNav .testconfig a,
 #testcontent #mainNav .testcontent a {
+#testconnection #mainNav .testconnection a {
     background-color: #9900cc;
     color: #fff;
     cursor: default;
