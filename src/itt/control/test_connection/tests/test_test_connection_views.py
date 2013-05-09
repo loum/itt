@@ -6,6 +6,8 @@ from test_connection.models import TestConnection
 
 class TestTestConnectionViews(TransactionTestCase):
 
+    fixtures = ['test_test_connection']
+
     @classmethod
     def setUpClass(cls):
        cls._c = Client()
@@ -55,6 +57,35 @@ class TestTestConnectionViews(TransactionTestCase):
         msg = ('"TestConnection.protocol" after insert should be "%s"' %
                expected)
         self.assertEqual(tc.protocol, expected, msg)
+
+    def test_post_update_ok_values(self):
+        """POST to the TestConnection update.html (Update Test Connection).
+        """ 
+        # Check that the "host" field is "localhost" before the update.
+        tc_before_upd = TestConnection.objects.get(name='test from fixture')
+
+        # Host.
+        expected = "localhost"
+        msg = 'TestConnection "host" before update should be "False"'
+        self.assertEqual(tc_before_upd.host, expected, msg)
+
+        request_post = {u'name': [u'test from fixture'],
+                        u'host': [u'banana'],
+                        u'port': [u'1234'],
+                        u'protocol': [u'tftp'],
+                        u'submit': [u'Update Test Connection'], }
+
+        response = self._c.post('/testconnection/', request_post)
+        msg = 'TestConnection index.html POST status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
+        # Check the database directly.
+        tc = TestConnection.objects.get(name='test from fixture')
+
+        # Host.
+        expected = "banana"
+        msg = 'TestConnection "host" after update should be "%s"' % expected
+        self.assertEqual(tc.host, expected, msg)
 
     @classmethod
     def tearDownClass(cls):
