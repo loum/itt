@@ -94,11 +94,15 @@ class HttpServer(itt.Server):
         self.server = BaseHTTPServer.HTTPServer((self.bind, self.port),
                                                 self.handler)
 
+        print "XXX:1"
         # Prepare the environment to handle SIGTERM.
-        signal.signal(signal.SIGTERM, self._exit_handler(self.server))
+        #signal.signal(signal.SIGTERM, self._exit_handler(self.server))
+        ## XXX: this is causing problems
 
+        print "XXX:2"
         # Call the SocketServer.py module serve_forever method.
         log_msg = '%s --' % type(self).__name__
+        print "XXX:3"
         log.debug('%s preparing server to handle requests ...' % log_msg)
         self.server.serve_forever()
 
@@ -109,7 +113,7 @@ class HttpServer(itt.Server):
         log.debug('%s terminated' % log_msg)
 
 if __name__ == '__main__':
-    myServer = itt.HttpServer(
+    myServer = itt.HttpServer('/tmp',
         bind='',
         request_handler=itt.HttpRequestHandler,
     )
@@ -117,6 +121,9 @@ if __name__ == '__main__':
         print "HTTP server starting"
         print "CTRL+C to terminate"
         myServer.start()
+        while 1:
+            ##  We're serving HTTP
+            pass
     except KeyboardInterrupt:
         pass
     print "\nHTTP server terminating"
