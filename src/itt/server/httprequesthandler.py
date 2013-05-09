@@ -16,16 +16,19 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     """Provides a custom HTTP request handler for ITT purposes.
     """
     
-    contentSent = ''
+    _contentSent = ''
 
     RANDOM_PATH = '/testing/dev/random'
     NULL_PATH = '/testing/dev/null'
 
     DEFAULT_BYTES = 1024
-    
+
+    ##  "chroot" requests to _root
+    _root = None
+
     def storeAndWrite(self, str, wfile):
-        """Store the string in self.contentSent, and write it to wfile)"""
-        self.contentSent = self.contentSent + str
+        """Store the string in self._contentSent, and write it to wfile)"""
+        self._contentSent = self._contentSent + str
         wfile.write(str)
     
     def do_POST(self):
@@ -59,6 +62,10 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.client_address[1],
             self.path,
         ))
+
+        ##  Set the request handlers root dir, equal to the servers root dir
+        ##  (See Python crazyness in itt.server.httpserver)
+        self._root = self.server.root
 
         ##  Deal with (potential) query strings
         if self.path.find('?') != -1:
@@ -100,7 +107,28 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         else:
         ##  Send real files from the servers' root
-            content = itt.TestContent(path)
+
+            ##  Is the root set?
+            if self._root is None:
+                ## XXX: throw a proper ITT exception?
+                msg = "Server root path not set"
+                log.error(msg)
+                raise Exception(msg)
+
+            ##  Normalise and check that we're still under self._root (our make-believe "chroot")
+            normpath = os.path.normpath("%s/%s" % (
+                self._root,
+                path,
+            ))
+            if not normpath.startswith(self._root):
+                ## XXX: throw a proper ITT exception?
+                msg = "Invalid path"
+                log.error(msg)
+                raise Exception(msg)
+
+            ##  We're happy that the file is safely under the self._root dir
+            content = itt.TestContent(normpath)
+            bytes = content.bytes
 
         ##  connection = None, as the client has created the connection
         self.test = itt.Test(config, content, None)
@@ -118,15 +146,19 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         i = int(0)
         while i < bytes:
             if chunk > 0:
+                if (bytes - i) < chunk:
+                    bytes_to_send = (bytes - i)
+                else:
+                    bytes_to_send = chunk
                 ##  Send only as much as we're allowed
-                data = self.test.content.read(bytes=chunk)
+                data = self.test.content.read(bytes=bytes_to_send)
                 if data == "":
                     ##  File was shorter than we thought?
                     break
 
                 self.storeAndWrite(data, self.wfile)
 
-                i = i + chunk
+                i = i + bytes_to_send
 
                 ##  Sleep for the minimum gap size
                 if i < bytes:
@@ -145,5 +177,5 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
            self.client_address[0],
            self.client_address[1],
            self.path,
-           hashlib.sha1(self.contentSent).hexdigest(),
+           hashlib.sha1(self._contentSent).hexdigest(),
         ))
