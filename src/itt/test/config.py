@@ -37,8 +37,15 @@ class TestConfig(object):
                  chunk_size=None,
     ):
         ##  properties
-        self.minimum_gap = minimum_gap
-        self.chunk_size = chunk_size
+##  I'm having issues with typer.py not validating ints & floats correctly...
+##  workaround below --pjay
+        self.minimum_gap = None
+        if minimum_gap is not None:
+            self.minimum_gap = float(minimum_gap)
+
+        self.chunk_size = None
+        if chunk_size is not None:
+            self.chunk_size = int(chunk_size)
 
     def __repr__(self):
         return "<TestConfig minimum_gap:%s chunk_size:%s>" % (
