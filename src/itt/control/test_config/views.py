@@ -1,4 +1,3 @@
-import re
 from django.http import (HttpResponse,
                          HttpResponseRedirect)
 from django.template import (RequestContext,
@@ -6,7 +5,7 @@ from django.template import (RequestContext,
 
 from test_config.models import TestConfig
 from test_config.forms import TestConfigForm
-from common.utils import parse_pk
+import common.utils
 
 
 def index(request):
@@ -29,7 +28,7 @@ def update(request):
         if request.POST['submit']:
             # See if we can extract the primary key from the submit
             # input type's value.
-            pk = parse_pk(request.POST['submit'])
+            pk = common.utils.parse_pk(request.POST['submit'])
 
             if pk is not None:
                 # Get the TestConfig record and present in edit form.
@@ -51,18 +50,7 @@ def update(request):
 def delete(request):
     """
     """
-    try:
-        if request.POST['submit']:
-            # See if we can extract the primary key from the submit
-            # input type's value.
-            pk = parse_pk(request.POST['submit'])
-
-            if pk is not None:
-                # Get the TestConfig record and present in edit form.
-                instance = TestConfig.objects.get(pk=pk)
-                instance.delete()
-    except KeyError:
-        pass
+    common.utils.delete(request, TestConfig)
 
     return HttpResponseRedirect('/testconfig/')
 

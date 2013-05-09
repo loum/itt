@@ -5,7 +5,7 @@ from django.http import (HttpResponse,
 
 from test_content.models import TestContent
 from test_content.forms import TestContentForm
-from common.utils import parse_pk
+import common.utils
 
 
 def index(request):
@@ -26,7 +26,7 @@ def update(request):
 
     try:
         if request.POST['submit']:
-            pk = parse_pk(request.POST['submit'])
+            pk = common.utils.parse_pk(request.POST['submit'])
 
             if pk is not None:
                 # Get the TestContent record and present in the edit form.
@@ -44,6 +44,13 @@ def update(request):
 
     return status
 
+
+def delete(request):
+    """
+    """
+    common.utils.delete(request, TestContent)
+
+    return HttpResponseRedirect('/testcontent/')
 
 def _index_get(request):
     """

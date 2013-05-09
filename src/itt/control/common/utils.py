@@ -1,3 +1,8 @@
+__all__ = [
+    "parse_pk",
+    "delete",
+]
+
 import re
 
 
@@ -34,3 +39,19 @@ def parse_pk(input_value):
         pass
 
     return pk
+
+
+def delete(request, FormObject):
+    """
+    """
+    try:
+        if request.POST['submit']:
+            # See if we can extract the primary key from the submit
+            # input type's value.
+            pk = parse_pk(request.POST['submit'])
+
+            if pk is not None:
+                instance = FormObject.objects.get(pk=pk)
+                instance.delete()
+    except KeyError:
+        pass

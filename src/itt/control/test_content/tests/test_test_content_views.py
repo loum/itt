@@ -83,6 +83,32 @@ class TestTestContentViews(TransactionTestCase):
         msg = '"TestContent.bytes" after update should be 2048'
         self.assertEqual(tc.bytes, expected, msg)
 
+    def test_post_delete_test_config(self):
+        """Test a POST to the TestContent index.html (Delete Test Content).
+        """
+        # First, insert a record into the database.
+        request_post = {u'name': [u'test content delete'],
+                        u'static': [u'off'],
+                        u'bytes': [u'1024'],
+                        u'submit': [u'Add Test Content'], }
+        response = self._c.post('/testcontent/', request_post)
+        msg = 'TestContent POST to server status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
+        # Query the DB directy to ensure that it exists.
+        instance = TestContent.objects.get(name='test content delete')
+
+        # Now delete it.
+        request_post = {u'submit': [u'test_content_del_pk_%d' %
+                                    instance.pk]}
+        response = self._c.post('/testcontent/delete/', request_post)
+        msg = 'TestContent POST to delete status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
+        # Finally, check the database.
+        with self.assertRaises(TestContent.DoesNotExist):
+            TestContent.objects.get(name='test content delete')
+
     @classmethod
     def tearDownClass(cls):
         cls._c = None
