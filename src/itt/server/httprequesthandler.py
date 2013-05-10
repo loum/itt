@@ -23,9 +23,6 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     DEFAULT_BYTES = 1024
 
-    ##  "chroot" requests to _root
-    _root = None
-
     def storeAndWrite(self, str, wfile):
         """Store the string in self._contentSent, and write it to wfile)"""
         self._contentSent = self._contentSent + str
@@ -55,6 +52,11 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 hashlib.sha1(received).hexdigest(),
         ))
 
+    def logAndThrow(self, message):
+            ## XXX: throw a proper ITT exception?
+            log.error(message)
+            raise Exception(message)
+
     def do_GET(self):
         """Respond to a GET request."""
         log.info("HTTP GET request received from %s on port %s for %s" % (
@@ -65,7 +67,7 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         ##  Set the request handlers root dir, equal to the servers root dir
         ##  (See Python crazyness in itt.server.httpserver)
-        self._root = self.server.root
+        root = self.server.root
 
         ##  Deal with (potential) query strings
         if self.path.find('?') != -1:
@@ -108,25 +110,16 @@ class HttpRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         else:
         ##  Send real files from the servers' root
 
-            ##  Is the root set?
-            if self._root is None:
-                ## XXX: throw a proper ITT exception?
-                msg = "Server root path not set"
-                log.error(msg)
-                raise Exception(msg)
-
-            ##  Normalise and check that we're still under self._root (our make-believe "chroot")
-            normpath = os.path.normpath("%s/%s" % (
-                self._root,
+            ##  Normalise and check that we're still under root (our make-believe "chroot")
+            normpath = os.path.normpath("%s%s%s" % (
+                root,
+                os.path.sep,
                 path,
             ))
-            if not normpath.startswith(self._root):
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid path"
-                log.error(msg)
-                raise Exception(msg)
+            if not normpath.startswith(root + os.path.sep):
+                self.logAndThrow("Invalid path")
 
-            ##  We're happy that the file is safely under the self._root dir
+            ##  We're happy that the file is safely under the root dir
             content = itt.TestContent(normpath)
             bytes = content.bytes
 
