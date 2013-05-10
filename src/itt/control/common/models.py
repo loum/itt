@@ -25,6 +25,8 @@ class CommonModel(models.Model):
         It is an error to have fields in the abstract base class with the
         same name as those in the child.
     """
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
