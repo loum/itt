@@ -1,7 +1,8 @@
 PY=/usr/bin/env python
-PYTHONPATH=../..
+PYTHONPATH=../..:../control
 LOG_CONF=../utils/conf
 NOSE=/usr/bin/nosetests -s -v
+DJANGO_SETTINGS_MODULE=settings
 
 # The TEST variable can be set to allow you to control which tests
 # to run.  For example, if the current project has a test set defined at
@@ -24,6 +25,7 @@ docs:
 	PYTHONPATH=$(PYTHONPATH) sphinx-build -b html ./doc/source ./doc/build
 
 test:
+	DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) \
 	PYTHONPATH=$(PYTHONPATH) LOG_CONF=$(LOG_CONF) $(NOSE) $(TEST)
 
 clean:
