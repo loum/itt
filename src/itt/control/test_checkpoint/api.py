@@ -8,7 +8,7 @@ from tastypie.validation import Validation
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 
-from test.models import (Node, Checkpoint)
+from test_checkpoint.models import (Node, Checkpoint)
 
 
 class NodeResource(ModelResource):
