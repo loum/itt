@@ -16,3 +16,4 @@ from itt.test import Test
 from itt.test.config import TestConfig
 from itt.test.content import TestContent
 from itt.test.connection import TestConnection
+from itt.test.checkpoint import TestCheckpoint
