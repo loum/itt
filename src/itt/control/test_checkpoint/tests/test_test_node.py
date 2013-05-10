@@ -4,10 +4,10 @@ import json
 from django.test import TransactionTestCase
 from django.test.client import Client
 
-from test.models import Node
+from test_checkpoint.models import Node
 
 
-class TestNode(TransactionTestCase):
+class TestTestNode(TransactionTestCase):
 
     @classmethod
     def setUpClass(cls):

@@ -2,8 +2,8 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 
-from test.api import (NodeResource,
-                      CheckpointResource)
+from test_checkpoint.api import (NodeResource,
+                                 CheckpointResource)
 
 node_resource = NodeResource()
 checkpoint_resource = CheckpointResource()

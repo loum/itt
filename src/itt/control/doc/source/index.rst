@@ -177,6 +177,25 @@ preparint the environment for you::
    :members:
    :show-inheritance:
 
+:mod:`itt.control.test_checkpoint` -- Modules
+---------------------------------------------
+
+ .. automodule:: itt.control.test_checkpoint
+
+:mod:`itt.control.test_checkpoint.views` -- The ITT Test Checkpoint View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: itt.control.test_checkpoint.views
+    :members:
+    :show-inheritance:
+
+:mod:`itt.control.test_checkpoint.models` -- The ITT Test Checkpoint Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: itt.control.test_checkpoint.models
+   :members:
+   :show-inheritance:
+
 Indices and tables
 ==================
 

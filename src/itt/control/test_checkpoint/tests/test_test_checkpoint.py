@@ -2,11 +2,11 @@ import json
 from django.test import TransactionTestCase
 from django.test.client import Client
 
-from test.models import Checkpoint
+from test_checkpoint.models import Checkpoint
 from itt.utils.files import data_generator
 
 
-class TestCheckpoint(TransactionTestCase):
+class TestTestCheckpoint(TransactionTestCase):
 
     fixtures = ['test_node']
 
