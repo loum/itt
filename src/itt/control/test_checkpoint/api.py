@@ -27,7 +27,7 @@ class CheckpointResource(ModelResource):
     """The Checkpoint REST resource.
 
     """
-    node = fields.ForeignKey(NodeResource, 'node')
+    node = fields.ToOneField(NodeResource, 'node')
 
     class Meta:
         queryset = Checkpoint.objects.all()

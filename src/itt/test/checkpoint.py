@@ -86,7 +86,9 @@ class TestCheckpoint(object):
     @property
     def payload(self):
         if self._payload is None:
-            self._payload = {'uid': self.uid, }
+            node_data = {'node': {'uid': self.uid,
+                                  'role': 'client'}}
+            self._payload = node_data
 
         return self._payload
 

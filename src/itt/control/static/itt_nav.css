@@ -22,6 +22,7 @@
     padding: 0.1em 0.7em;
     text-decoration: none;
     border-left: thin solid #ccc;
+    color: #7a00a3;
 }
 #nav ul a:hover {
     color: #f9cb00;
@@ -30,7 +31,8 @@
 #servers #mainNav .servers a,
 #testconfig #mainNav .testconfig a,
 #testcontent #mainNav .testcontent a,
-#testconnection #mainNav .testconnection a {
+#testconnection #mainNav .testconnection a,
+#testcheckpoint #mainNav .testcheckpoint a {
     background-color: #9900cc;
     color: #fff;
     cursor: default;
