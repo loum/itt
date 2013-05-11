@@ -4,9 +4,10 @@ __all__ = [
 ]
 
 from django.db import models
+from common.models import CommonModel
 
 
-class Node(models.Model):
+class Node(CommonModel):
     """The Node model.
 
     """
@@ -14,10 +15,9 @@ class Node(models.Model):
     role = models.CharField(max_length=50)
 
 
-class Checkpoint(models.Model):
+class Checkpoint(CommonModel):
     """The Checkpoint model.
 
     """
     node = models.ForeignKey(Node)
     data = models.CharField(max_length=50)
-    created_date = models.DateTimeField()

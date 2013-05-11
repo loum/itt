@@ -36,23 +36,24 @@ class TestTestCheckpoint(TestCase):
         msg = "TestCheckpoint uid should return auto-generated value"
         self.assertEqual(chkp.uid, self._uid, msg)
 
-#    def test_commit(self):
-#        """Simulate a POST request with constructed data.
-#        """
-#        # Note: we can actually use the commit method here because we
-#        # don't have an operational REST API.  Instead, we'll fake it with
-#        # Django's test client.  At least, we can verify the payload ???
-#        chkp = itt.TestCheckpoint()
-#
-#        r = self._c.post(chkp.url,
-#                         data=json.dumps(chkp.payload),
-#                         content_type='application/json')
-#
-#        # Check the response code.
-#        received = r.status_code
-#        expected = 201
-#        msg = 'POST response not 201 -- received %s' % received
-#        self.assertEqual(received, expected, msg)
+    def test_commit(self):
+        """Simulate a POST request with constructed data.
+        """
+        # Note: we can actually use the commit method here because we
+        # don't have an operational REST API.  Instead, we'll fake it with
+        # Django's test client.  At least, we can verify the payload ???
+        chkp = itt.TestCheckpoint()
+        chkp.payload['data'] = 'banana'
+
+        r = self._c.post(chkp.url,
+                         data=json.dumps(chkp.payload),
+                         content_type='application/json')
+
+        # Check the response code.
+        received = r.status_code
+        expected = 201
+        msg = 'POST response not 201 -- received %s' % received
+        self.assertEqual(received, expected, msg)
 
     @classmethod
     def tearDownClass(cls):
