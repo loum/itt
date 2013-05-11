@@ -100,7 +100,7 @@ class TestTestConnectionViews(TransactionTestCase):
         msg = 'TestConnection POST to server status_code not 302 (Redirect)'
         self.assertEqual(response.status_code, 302, msg)
 
-        # Query the DV directly to ensure that it exists.
+        # Query the DB directly to ensure that it exists.
         instance = TestConnection.objects.get(name='test connection del')
 
         # Now delete it.
@@ -115,5 +115,5 @@ class TestTestConnectionViews(TransactionTestCase):
             TestConnection.objects.get(name='test connection del')
 
     @classmethod
-    def tearDownClass(cls):
+    def (cls):
         cls._cls = None

@@ -1,9 +1,11 @@
+from django.http import (HttpResponse,
+                         HttpResponseRedirect)
 from django.template import (RequestContext,
                              loader)
-from django.http import HttpResponse
 
 from test_checkpoint.models import Checkpoint
 from test_checkpoint.forms import TestCheckpointForm
+import common.utils
 
 
 def index(request):
@@ -18,3 +20,10 @@ def index(request):
                         'test_checkpoint_list': test_checkpoint_list})
 
     return HttpResponse(t.render(c))
+
+def delete(request):
+    """
+    """
+    common.utils.delete(request, Checkpoint)
+
+    return HttpResponseRedirect('/testcheckpoint/')
