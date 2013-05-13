@@ -14,6 +14,9 @@ class Node(CommonModel):
     uid = models.CharField(max_length=20, unique=True)
     role = models.CharField(max_length=50)
 
+    def __unicode__(self):
+        return self.uid
+
 
 class Checkpoint(CommonModel):
     """The Checkpoint model.

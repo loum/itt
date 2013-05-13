@@ -1,6 +1,7 @@
 @import url('/static/itt.css');
 
-#testCheckpointList {
+#testCheckpointList,
+#testCheckpointSearch {
     padding-bottom: 2%;
 }
 #nodeHead,
