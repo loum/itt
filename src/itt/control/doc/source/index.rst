@@ -68,17 +68,24 @@ preparint the environment for you::
 
 .. automodule:: itt.control.test
 
-:mod:`itt.control.test.api` -- The ITT Test Case RESTful API
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:mod:`itt.control.test_checkpoint.api` -- The ITT Test Case RESTful API
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: itt.control.test.api
+.. automodule:: itt.control.test_checkpoint.api
     :members:
     :show-inheritance:
 
-:mod:`itt.control.test.models` -- The ITT Test Case Model
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:mod:`itt.control.test_checkpoint.models` -- The ITT Test Case Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: itt.control.test.models
+.. automodule:: itt.control.test_checkpoint.models
+   :members:
+   :show-inheritance:
+
+:mod:`itt.control.test_checkpoint.views` -- The ITT Test Case Views
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: itt.control.test_checkpoint.views
    :members:
    :show-inheritance:
 
@@ -177,22 +184,22 @@ preparint the environment for you::
    :members:
    :show-inheritance:
 
-:mod:`itt.control.test_checkpoint` -- Modules
----------------------------------------------
+:mod:`itt.control.test_case` -- Modules
+---------------------------------------
 
- .. automodule:: itt.control.test_checkpoint
+ .. automodule:: itt.control.test_case
 
-:mod:`itt.control.test_checkpoint.views` -- The ITT Test Checkpoint View
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:mod:`itt.control.test_case.views` -- The ITT Test Case View
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: itt.control.test_checkpoint.views
+.. automodule:: itt.control.test_case.views
     :members:
     :show-inheritance:
 
-:mod:`itt.control.test_checkpoint.models` -- The ITT Test Checkpoint Model
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:mod:`itt.control.test_case.models` -- The ITT Test Case Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: itt.control.test_checkpoint.models
+.. automodule:: itt.control.test_case.models
    :members:
    :show-inheritance:
 

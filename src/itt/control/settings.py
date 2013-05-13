@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     'test_config',
     'test_content',
     'test_connection',
+    'test_case',
     'common',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
