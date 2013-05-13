@@ -115,5 +115,5 @@ class TestTestConnectionViews(TransactionTestCase):
             TestConnection.objects.get(name='test connection del')
 
     @classmethod
-    def (cls):
+    def tearDownClass(cls):
         cls._cls = None

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% comment %}
+The itt.control.testccheckpoint search.html accessible via:
+
+    http://<hostname><:itt_port>/testcheckpoint/search/
+
+    Variables:
+        test_checkpoint_list (itt.control.test_checkpoint.TestCheckpoint):
+        direct reference to the list of
+        itt.control.test_checkpoint.TestCheckpoint objects.
+
+{% endcomment %}
+
+{% block css %}
+<link href="{{ STATIC_URL }}test_checkpoint.css"
+      rel="stylesheet"
+      type="text/css" />
+{% endblock %}
+
+{% block body_tag %}<body id="testcheckpoint">{% endblock %}
+
+{% block title %}IP Test Tool Test Checkpoint{% endblock %}
+
+{% block content %}
+
+<h1>Search Test Checkpoint</h1>
+<div id="testCheckpointSearch">
+<form action="/testcheckpoint/results/" method="post">
+    {% csrf_token %}
+    <table>
+        <colgroup>
+            <col id="name" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th id="nodeHead">Node UID</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td colspan="1">
+                    <input type="submit"
+                           name="submit"
+                           value="Search Test Checkpoints">
+                    </input>
+                    <input type="reset" value="Reset"></input>
+                    </input>
+                </td>
+            </tr>
+        </tfoot>
+        <tbody>
+            <tr>
+                <td class="textLeftAlign">{{ form.node }}</td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+</div> <!-- testCheckpointSearch -->
+{% endblock %} {# connection #}

@@ -22,6 +22,23 @@ class TestTestCheckpointViews(TransactionTestCase):
         msg = 'TestCheckpoint index.html GET status_code not 200 (OK)'
         self.assertEqual(response.status_code, 200, msg)
 
+    def test_get_search(self):
+        """GET to the TestCheckpoint search.html (Search Test Checkpoints).
+        """
+        response = self._c.get('/testcheckpoint/search/')
+
+        msg = 'TestCheckpoint search.html GET status_code not 200 (OK)'
+        self.assertEqual(response.status_code, 200, msg)
+
+    def test_post_results_no_node(self):
+        """POST to the TestCheckpoint results.html with no node defined.
+        """
+        request_post = {u'submit': [u'Search Test Checkpoints']}
+        response = self._c.post('/testcheckpoint/results/', request_post)
+
+        msg = 'TestCheckpoint result.html POST status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
     def test_post_delete_test_checkpoint(self):
         """POST to the TestCheckpoint index.html (Delete Test Checkpoint).
         """

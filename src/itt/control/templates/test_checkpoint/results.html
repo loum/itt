@@ -35,6 +35,20 @@ The itt.control.testcheckpoint index.html accessible via:
             <th id="actionHead">&nbsp;</th>
         </tr>
     </thead>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                <form class="imageForm"
+                      action="/testcheckpoint/search/" method="post">
+                    {% csrf_token %}
+                    <input type="submit"
+                        name="submit"
+                        value="New Test Checkpoint Search"
+                    </input>
+                </form>
+            </td>
+        </tr>
+    </tfoot>
     {% if test_checkpoint_list %}
     <tbody>
     {% for test_checkpoint in test_checkpoint_list %}
