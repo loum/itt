@@ -21,12 +21,10 @@
 #wrapper {
     position: relative;
     width: 700px;
-    /*height: 450px;*/
     height: auto;
     margin: 15px auto;
     background-color: #fff;
     padding-bottom: 10px;
-    /*border: thin solid #ccc;*/
     border-radius: 3px;
     box-shadow: 0px 2px 5px #888;
 }
@@ -35,7 +33,6 @@
     padding: 1%;
     margin-left: auto;
     margin-right: auto;
-    /*border: thin solid #ccc;*/
 }
 #content fieldset {
     border: 0;
