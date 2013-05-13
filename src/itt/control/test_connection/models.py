@@ -18,3 +18,6 @@ class TestConnection(CommonModel):
                                          MaxValueValidator(65535)])
     protocol = models.CharField(max_length=4,
                                 choices=common.utils.PROTOCOL_CHOICES)
+
+    def __unicode__(self):
+        return self.name

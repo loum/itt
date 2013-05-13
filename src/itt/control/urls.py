@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^testcheckpoint/search/$', 'test_checkpoint.views.search'),
     url(r'^testcheckpoint/results/$', 'test_checkpoint.views.results'),
     url(r'^testcheckpoint/delete/$', 'test_checkpoint.views.delete'),
+    url(r'^testcase/$', 'test_case.views.index'),
     url(r'^test/', include(node_resource.urls)),
     url(r'^test/', include(checkpoint_resource.urls)),
 

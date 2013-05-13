@@ -13,3 +13,6 @@ class TestContent(CommonModel):
     bytes = IntegerRangeField(default=0,
                               min_value=0,
                               validators=[MinValueValidator(0)], )
+
+    def __unicode__(self):
+        return self.name
