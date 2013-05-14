@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^testcheckpoint/delete/$', 'test_checkpoint.views.delete'),
     url(r'^testcase/$', 'test_case.views.index'),
     url(r'^testcase/update/$', 'test_case.views.update'),
+    url(r'^testcase/delete/$', 'test_case.views.delete'),
     url(r'^test/', include(node_resource.urls)),
     url(r'^test/', include(checkpoint_resource.urls)),
 

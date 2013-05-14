@@ -17,6 +17,7 @@ class TestTestCaseViews(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
         cls._c = Client()
+        cls._test_name = 'case from fixture'
 
     def test_get(self):
         """GET request to the TestCase index.html.
@@ -70,7 +71,7 @@ class TestTestCaseViews(TransactionTestCase):
         """POST to the TestCase update.html (Update Test Case).
         """
         # Check that name of the test config before the update.
-        tc_before_upd = TestCase.objects.get(name='case from fixture')
+        tc_before_upd = TestCase.objects.get(name='%s' % self._test_name)
 
         # Test Config name.
         id = tc_before_upd.test_configuration_id
@@ -80,7 +81,7 @@ class TestTestCaseViews(TransactionTestCase):
         self.assertEqual(expected, received.name, msg)
 
         # Prepare the update request POST.
-        request_post = {u'name': [u'case from fixture'],
+        request_post = {u'name': [u'%s' % self._test_name],
                         u'test_configuration': [u'2'],
                         u'test_content': [u'1'],
                         u'test_connection': [u'1'],
@@ -91,7 +92,7 @@ class TestTestCaseViews(TransactionTestCase):
         self.assertEqual(response.status_code, 302, msg)
 
         # Check that name of the test config after the update.
-        tc_after_upd = TestCase.objects.get(name='case from fixture')
+        tc_after_upd = TestCase.objects.get(name='%s' % self._test_name)
 
         # Test Config name.
         id = tc_after_upd.test_configuration_id
@@ -100,6 +101,25 @@ class TestTestCaseViews(TransactionTestCase):
         msg = 'Existing check should return config name "%s"' % expected
         self.assertEqual(expected, received.name, msg)
 
+
+    def test_post_delete_test_case(self):
+        """POST delete request to the TestCase index.html (Delete Test Case).
+        """
+        # Query the DB directly to ensure that it exists.
+        instance = TestCase.objects.get(name='%s' % self._test_name)
+
+        # Now delete it.
+        request_post = {u'submit': [u'test_case_del_pk_%d' %
+                                    instance.pk]}
+        response = self._c.post('/testconnection/delete/', request_post)
+        msg = 'TestCase POST to delete status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
+        # Finally, check the database.
+        with self.assertRaises(TestCase.DoesNotExist):
+            TestCase.objects.get(name='%s' % self._test_name)
+
     @classmethod
     def tearDownClass(cls):
         cls._c = None
+        cls._test_name = None
