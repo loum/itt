@@ -62,14 +62,14 @@ class TestTestConnectionViews(TransactionTestCase):
         """POST to the TestConnection update.html (Update Test Connection).
         """ 
         # Check that the "host" field is "localhost" before the update.
-        tc_before_upd = TestConnection.objects.get(name='test from fixture')
+        tc_before_upd = TestConnection.objects.get(name='conn from fixture')
 
         # Host.
         expected = "localhost"
         msg = 'TestConnection "host" before update should be "False"'
         self.assertEqual(tc_before_upd.host, expected, msg)
 
-        request_post = {u'name': [u'test from fixture'],
+        request_post = {u'name': [u'conn from fixture'],
                         u'host': [u'banana'],
                         u'port': [u'1234'],
                         u'protocol': [u'tftp'],
@@ -80,7 +80,7 @@ class TestTestConnectionViews(TransactionTestCase):
         self.assertEqual(response.status_code, 302, msg)
 
         # Check the database directly.
-        tc = TestConnection.objects.get(name='test from fixture')
+        tc = TestConnection.objects.get(name='conn from fixture')
 
         # Host.
         expected = "banana"

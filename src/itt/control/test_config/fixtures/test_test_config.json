@@ -3,7 +3,7 @@
     "pk": 1,
     "model": "test_config.testconfig",
     "fields": {
-      "name": "test from fixture"
+      "name": "config from fixture"
     }
   }
 ]

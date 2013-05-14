@@ -68,13 +68,13 @@ class TestTestConfigViews(TransactionTestCase):
         """Test a POST to the TestConfig update.html (Update Test Config).
         """
         # Check that the "upload" field is False before the update.
-        tc_before_update = TestConfig.objects.get(name='test from fixture')
+        tc_before_update = TestConfig.objects.get(name='config from fixture')
 
         # Upload.
         msg = 'TestConfig "upload" before update should be "False"'
         self.assertFalse(tc_before_update.upload, msg)
 
-        request_post = {u'name': [u'test from fixture'],
+        request_post = {u'name': [u'config from fixture'],
                         u'upload': [u'on'],
                         u'bytes': [u'0'],
                         u'minimum_gap': [u'0.0'],
@@ -86,7 +86,7 @@ class TestTestConfigViews(TransactionTestCase):
         self.assertEqual(response.status_code, 302, msg)
 
         # Check the database directly.
-        tc = TestConfig.objects.get(name='test from fixture')
+        tc = TestConfig.objects.get(name='config from fixture')
 
         # Upload.
         msg = 'TestConfig "upload" after update should be "True"'

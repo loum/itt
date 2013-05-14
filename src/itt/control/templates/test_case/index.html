@@ -44,9 +44,11 @@ The itt.control.testcase index.html accessible via:
         <tr class="odd">
         {% endif %}
             <td class="textLeftAlign">{{ test_case.name }}</td>
-            <td class="textLeftAlign">{{ test_case.host }}</td>
-            <td>{{ test_case.port }}</td>
-            <td>{{ test_case.protocol }}</td>
+            <td class="textLeftAlign">
+                {{ test_case.test_configuration }}
+            </td>
+            <td class="textLeftAlign">{{ test_case.test_content }}</td>
+            <td class="textLeftAlign">{{ test_case.test_connection }}</td>
             <td class="actionsIcons">
                 <form class="imageForm"
                       action="/testcase/update/" method="post">
