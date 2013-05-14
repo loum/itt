@@ -11,6 +11,7 @@ class TestTestConnectionViews(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
        cls._c = Client()
+       cls._test_name = 'conn from fixture'
 
     def test_get(self):
         """Test a GET request to the TestConnection index.html.
@@ -90,29 +91,19 @@ class TestTestConnectionViews(TransactionTestCase):
     def test_post_delete_test_config(self):
         """Test a POST to the TestContent index.html (Delete Test Content).
         """
-        # First, insert a record into the database.
-        request_post = {u'name': [u'test connection del'],
-                        u'host': [u'localhost'],
-                        u'port': [u'1234'],
-                        u'protocol': [u'http'],
-                        u'submit': [u'Add Test Connection'], }
-        response = self._c.post('/testconnection/', request_post)
-        msg = 'TestConnection POST to server status_code not 302 (Redirect)'
-        self.assertEqual(response.status_code, 302, msg)
-
         # Query the DB directly to ensure that it exists.
-        instance = TestConnection.objects.get(name='test connection del')
+        instance = TestConnection.objects.get(name='%s' % self._test_name)
 
         # Now delete it.
         request_post = {u'submit': [u'test_connection_del_pk_%d' %
                                     instance.pk]}
         response = self._c.post('/testconnection/delete/', request_post)
-        msg = 'TestConnection POST to delete status_code not 304 (Redirect)'
+        msg = 'TestConnection POST to delete status_code not 302 (Redirect)'
         self.assertEqual(response.status_code, 302, msg)
 
         # Finally, check the database.
         with self.assertRaises(TestConnection.DoesNotExist):
-            TestConnection.objects.get(name='test connection del')
+            TestConnection.objects.get(name='%s' % self._test_name)
 
     @classmethod
     def tearDownClass(cls):

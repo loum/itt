@@ -69,6 +69,14 @@ def _index_post(request):
     return HttpResponseRedirect('/testcase/')
 
 
+def delete(request):
+    """
+    """
+    common.utils.delete(request, TestCase)
+
+    return HttpResponseRedirect('/testcase/')
+
+
 def _index_get(request):
     """
     """
