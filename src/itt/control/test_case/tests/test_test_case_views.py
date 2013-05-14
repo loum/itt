@@ -11,7 +11,8 @@ class TestTestCaseViews(TransactionTestCase):
 
     fixtures = ['test_test_config',
                 'test_test_content',
-                'test_test_connection']
+                'test_test_connection',
+                'test_test_case']
 
     @classmethod
     def setUpClass(cls):
@@ -63,6 +64,40 @@ class TestTestCaseViews(TransactionTestCase):
         expected = 'conn from fixture'
         received = TestConnection.objects.get(pk=tc.test_content_id)
         msg = 'Post-insert check should return content name "%s"' % expected
+        self.assertEqual(expected, received.name, msg)
+
+    def test_post_update_ok_values(self):
+        """POST to the TestCase update.html (Update Test Case).
+        """
+        # Check that name of the test config before the update.
+        tc_before_upd = TestCase.objects.get(name='case from fixture')
+
+        # Test Config name.
+        id = tc_before_upd.test_configuration_id
+        expected = 'config from fixture'
+        received = TestConfig.objects.get(pk=id)
+        msg = 'Existing check should return config name "%s"' % expected
+        self.assertEqual(expected, received.name, msg)
+
+        # Prepare the update request POST.
+        request_post = {u'name': [u'case from fixture'],
+                        u'test_configuration': [u'2'],
+                        u'test_content': [u'1'],
+                        u'test_connection': [u'1'],
+                        u'submit': [u'Update Test Case'], }
+
+        response = self._c.post('/testcase/', request_post)
+        msg = 'TestCase index.html POST status_code not 302 (Redirect)'
+        self.assertEqual(response.status_code, 302, msg)
+
+        # Check that name of the test config after the update.
+        tc_after_upd = TestCase.objects.get(name='case from fixture')
+
+        # Test Config name.
+        id = tc_after_upd.test_configuration_id
+        expected = 'config2 from fixture'
+        received = TestConfig.objects.get(pk=id)
+        msg = 'Existing check should return config name "%s"' % expected
         self.assertEqual(expected, received.name, msg)
 
     @classmethod
