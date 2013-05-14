@@ -1,0 +1,10 @@
+[
+    {
+        "pk": 1, 
+        "model": "test_checkpoint.node", 
+        "fields": {
+            "role": "", 
+            "uid": "00:11:22:33:44:55"
+        }
+    }
+]

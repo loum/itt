@@ -2,8 +2,8 @@ from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 
-from test.api import (NodeResource,
-                      CheckpointResource)
+from test_checkpoint.api import (NodeResource,
+                                 CheckpointResource)
 
 node_resource = NodeResource()
 checkpoint_resource = CheckpointResource()
@@ -15,6 +15,22 @@ urlpatterns = patterns('',
     url(r'^config/$', 'config.views.index'),
     url(r'^server/$', 'server.views.index'),
     url(r'^server/insert', 'server.views.insert'),
+    url(r'^testcontent/$', 'test_content.views.index'),
+    url(r'^testcontent/update/$', 'test_content.views.update'),
+    url(r'^testcontent/delete/$', 'test_content.views.delete'),
+    url(r'^testconfig/$', 'test_config.views.index'),
+    url(r'^testconfig/update/$', 'test_config.views.update'),
+    url(r'^testconfig/delete/$', 'test_config.views.delete'),
+    url(r'^testconnection/$', 'test_connection.views.index'),
+    url(r'^testconnection/update/$', 'test_connection.views.update'),
+    url(r'^testconnection/delete/$', 'test_connection.views.delete'),
+    url(r'^testcheckpoint/$', 'test_checkpoint.views.search'),
+    url(r'^testcheckpoint/search/$', 'test_checkpoint.views.search'),
+    url(r'^testcheckpoint/results/$', 'test_checkpoint.views.results'),
+    url(r'^testcheckpoint/delete/$', 'test_checkpoint.views.delete'),
+    url(r'^testcase/$', 'test_case.views.index'),
+    url(r'^testcase/update/$', 'test_case.views.update'),
+    url(r'^testcase/delete/$', 'test_case.views.delete'),
     url(r'^test/', include(node_resource.urls)),
     url(r'^test/', include(checkpoint_resource.urls)),
 

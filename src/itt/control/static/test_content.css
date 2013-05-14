@@ -1,0 +1,30 @@
+@import url('/static/itt.css');
+
+#testContentList, #testContentAdd {
+    padding-bottom: 2%;
+}
+#nameHead {
+    padding-left: 2%;
+    text-align: left;
+    width: 50%;
+}
+#staticHead {
+    width: 10%;
+}
+#bytesHead {
+    width: 20%;
+}
+#id_name {
+    width: 200px;
+}
+#id_static, #id_bytes {
+    width: 40px;
+}
+.actionsIcons {
+    padding: 0;
+}
+.imageForm {
+    float: left;
+    padding-left: 5px;
+    padding-right: 5px;
+}

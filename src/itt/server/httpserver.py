@@ -7,6 +7,7 @@
 ##  Hack for running HttpServer from itself; ie. python httpserver.py
 import sys
 sys.path.insert(0, "../..")
+
 import BaseHTTPServer
 import signal
 
@@ -93,11 +94,19 @@ class HttpServer(itt.Server):
         self.server = BaseHTTPServer.HTTPServer((self.bind, self.port),
                                                 self.handler)
 
-        # Prepare the environment to handle SIGTERM.
-        signal.signal(signal.SIGTERM, self._exit_handler(self.server))
+        ##  Python crazyness: setting a variable inside the server object
+        ##  that was never coded for by the Python standard lib programmers
+        self.server.root = self.root
 
+        print "XXX:1"
+        # Prepare the environment to handle SIGTERM.
+        #signal.signal(signal.SIGTERM, self._exit_handler(self.server))
+        ## XXX: this is causing problems
+
+        print "XXX:2"
         # Call the SocketServer.py module serve_forever method.
         log_msg = '%s --' % type(self).__name__
+        print "XXX:3"
         log.debug('%s preparing server to handle requests ...' % log_msg)
         self.server.serve_forever()
 
@@ -108,7 +117,7 @@ class HttpServer(itt.Server):
         log.debug('%s terminated' % log_msg)
 
 if __name__ == '__main__':
-    myServer = itt.HttpServer(
+    myServer = itt.HttpServer('/tmp',
         bind='',
         request_handler=itt.HttpRequestHandler,
     )
@@ -116,6 +125,9 @@ if __name__ == '__main__':
         print "HTTP server starting"
         print "CTRL+C to terminate"
         myServer.start()
+        while 1:
+            ##  We're serving HTTP
+            pass
     except KeyboardInterrupt:
         pass
     print "\nHTTP server terminating"

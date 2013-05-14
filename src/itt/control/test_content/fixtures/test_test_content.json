@@ -1,0 +1,11 @@
+[
+  {
+    "pk": 1,
+    "model": "test_content.testcontent",
+    "fields": {
+      "name": "content from fixture",
+      "static": 0,
+      "bytes": 1024
+    }
+  }
+]

@@ -1,6 +1,8 @@
+@import url('/static/itt_nav.css');
+
 #header {
     background-color: #9900cc;
-    height: 52px;
+    height: 36px;
 }
 #header img {
     float: left;
@@ -10,8 +12,8 @@
     position: relative;
     text-align: right;
     color: #fff;
-    font-size: 2.5em;
-    padding-top: 15px;
+    font-size: 1.5em;
+    padding-top: 8px;
     padding-right: 30px;
     border-bottom: 0;
     margin: 0;
@@ -19,12 +21,10 @@
 #wrapper {
     position: relative;
     width: 700px;
-    /*height: 450px;*/
     height: auto;
     margin: 15px auto;
     background-color: #fff;
     padding-bottom: 10px;
-    /*border: thin solid #ccc;*/
     border-radius: 3px;
     box-shadow: 0px 2px 5px #888;
 }
@@ -33,14 +33,13 @@
     padding: 1%;
     margin-left: auto;
     margin-right: auto;
-    /*border: thin solid #ccc;*/
 }
 #content fieldset {
     border: 0;
 }
 
 h1 {
-    font-size: 1.5em;
+    font-size: 1.3em;
     color: #616161;
     font-weight: normal;
     font-family: Century Gothic, sans-serif;
@@ -60,58 +59,35 @@ table {
     position: static;
     top: 1em;
     border-collapse: collapse;
-    width: 85%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
     border: thin solid #ccc;
 }
-
-th {
-    /*background: #d5d6de;*/
+thead {
+    background-color: #d1d1d1;
     border-top: 2px solid #a5a5a5;
     border-bottom: 2px solid #a5a5a5;
+    text-align: center;
+    padding: 0.4em;
+}
+th {
     font-weight: bold;
+    padding: 0.4em;
+    text-align: center;
 }
 td {
     font-weight: normal;
+    padding: 0.4em;
+    text-align: center;
 }
-th, td {
-    padding: 0.5em;
+tfoot td {
     text-align: left;
 }
 .odd {
     background-color: #f1f1f1;
 }
-
-#nav {
-    font-size: 1.2em;
-    margin-left: auto;
-    margin-right: auto;
-    height: 1.8em;
-    border-bottom: thin solid #ccc;
-    background: #f2f2f2;
-    /*background: #f5f0df;*/
-    /*border: medium solid #ccc;*/
-    box-shadow: 0 0 8px #888;
-}
-#nav ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    float: left;
-}
-#nav ul li {
-    float: left;
-}
-#nav ul a {
-    font-weight: bold;
-    display: block;
-    padding: 0.3em 1.5em;
-    text-decoration: none;
-}
-#nav ul a:hover {
-    color: #f9cb00;
-}
-form {
-    padding-bottom: 20px
+.textLeftAlign {
+    padding-left: 2%;
+    text-align: left;
 }

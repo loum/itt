@@ -1,0 +1,19 @@
+@import url('/static/itt.css');
+
+#serverList {
+    padding-bottom: 2%;
+}
+#nameHead, #rootHead {
+    padding-left: 2%;
+    text-align: left;
+    width: 30%;
+}
+#protocolHead, #portHead {
+    width: 15%;
+}
+#id_name, #id_root {
+    width: 200px;
+}
+#id_protocol, #id_port {
+    width: 40px;
+}

@@ -4,10 +4,6 @@
 @author: pjay
 '''
 
-##  Hack for running HttpClient from itself; ie. ./httpclient.py
-import sys
-sys.path.insert(0, "../..")
-
 import optparse
 import requests
 import hashlib
@@ -18,8 +14,6 @@ import socket
 import urlparse
 import os
 
-from types import *
-
 import itt
 from itt.utils.log import log, class_logging
 
@@ -27,93 +21,151 @@ class HttpClient(itt.Client):
     '''Provides a HTTP client for uploads & downloads
     '''
 
+    def getGap(self):
+        ##  Do we have minimum packet gaps?
+        min_gap = float(0.0)
+        if self.test.config.minimum_gap is not None:
+            min_gap = float(self.test.config.minimum_gap)
+            log.info("  minimum_gap     : %s seconds" % min_gap)
+        return min_gap
+
+    def getChunk(self):
+        ##  Do we have maximum chunk sizes?
+        chunk = int(0)
+        if self.test.config.chunk_size is not None:
+            chunk = int(self.test.config.chunk_size)
+            log.info("  chunk_size      : %s bytes" % chunk)
+        return chunk
+
     def download(self):
-        log.info("HTTP client begins download (HTTP GET): %s" % (self.opts.url))
+        
         try:
-            print urlparse.urlsplit(self.opts.url)
-            download = requests.get(self.opts.url)
-            log.info("HTTP client finishes download (HTTP GET): %s" % (self.opts.url))
-            if download.status_code == 200:
-                shasum = hashlib.sha1(download.content).hexdigest()
-                log.info("SHA1 sum of content received: %s" % (shasum))
+            log.info("HTTP client begins download (HTTP GET):")
+
+            bytes_qs = ""
+
+            if self.test.content.static:
+                url_path = self.test.content.filename
+                log.info("  content: %s" % url_path)
             else:
-                log.error("Download (HTTP GET) failed with status code: %s" % (download.status_code))
+                url_path = "/testing/dev/random"
+                log.info("  content         : (random data)")
+                log.info("  size            : %s bytes" % self.test.content.bytes)
+                bytes_qs = "&bytes=%s" % (
+                    self.test.content.bytes,
+                )
+
+            min_gap = self.getGap()
+            chunk = self.getChunk()
+
+            generated_url = urlparse.urljoin(
+                "http://%s" % self.test.connection.netloc,
+                "%s?minimum_gap=%s&chunk_size=%s%s" % (
+                    url_path,
+                    min_gap,
+                    chunk,
+                    bytes_qs,  ##  May be set to "&bytes=x" if random data
+                ),
+            )
+            log.info("  url             : %s" % generated_url)
+
+            download = requests.get(generated_url)
+            shasum = hashlib.sha1(download.content).hexdigest()
+            log.info("HTTP client finishes download (HTTP GET):")
+            log.info("  url             : %s" % generated_url) 
+            log.info("  received        : %s bytes" % len(download.content))
+            log.info("  sha1_sum        : %s" % shasum)
+            log.info("  http_response   : %s" % (download.status_code))
         except requests.ConnectionError, e:
             log.error("Download (HTTP GET) failed with a connection error: %s" % (str(e)))
 
     def upload(self):
+        HTTP_DEVNULL = "/testing/dev/null"
+
+        ##  Size of data
+        bytes = int(0)
 
         try:
-            if self.config.content is not None:
-                ##  XXX: implement
-                pass
+            log.info("HTTP client begins upload (HTTP POST):")
+            generated_url = "http://%s/%s" % (
+                self.test.connection.netloc,
+                HTTP_DEVNULL,
+            )
+            log.info("  url             : %s" % generated_url)
+
+            if self.test.content.static:
+                log.info("  content         : %s" % self.test.content.filename)
             else:
-                self.uploadRandom(
-                    self.config.bytes,
-                    self.config.minimum_gap,
-                    self.config.chunk_size,
-                )
+                log.info("  content         : (random data)")
+
+            bytes = self.test.content.bytes
+            log.info("  size            : %s bytes" % bytes)
+
+            min_gap = self.getGap()
+            chunk = self.getChunk()
+
+            ##  Open the file for sending
+            self.test.content.open()
+            ##  Open HTTP connection & send headers
+            http = self.setupUploadConnection(HTTP_DEVNULL)
+
+            ##  Send data
+            i = int(0)
+            while i < bytes:
+                if chunk > 0:
+                    if (bytes - i) < chunk:
+                        bytes_to_send = (bytes - i)
+                    else:
+                        bytes_to_send = chunk
+                    ##  Send only as much as we're allowed
+                    data = self.test.content.read(bytes=bytes_to_send)
+                    if data == "":
+                        ##  File was shorter than we thought?
+                        break
+                    
+                    self.addAndSend(http, data)
+
+                    i = i + bytes_to_send
+                    
+                    ##  Sleep for the minimum gap size
+                    if i < bytes:
+                        time.sleep(min_gap)
+
+                else:
+                    ##  Send everything as fast as possible
+                    self.addAndSend(http, self.test.content.read())
+
+                    i = i + bytes
+
+            ##  Close the file
+            self.test.content.close()
+
+            ##  XXX: todo: generalise the sha1sum stuff
+            shasum = hashlib.sha1(self.sent_data).hexdigest()
+            log.info("HTTP client finishes upload (HTTP POST):")
+            log.info("  url             : %s" % generated_url)
+            log.info("  sent            : %s bytes" % len(self.sent_data))
+            log.info("  sha1_sum        : %s" % shasum)
+
+            ##  XXX: todo: if response ==200, else: error
+            response = http.getresponse()
+            log.info("  http_response   : %s" % (
+                response.status,
+            ))
 
         except (socket.error, httplib.HTTPException), e:
             log.error("Upload (HTTP POST) failed with an error: %s" % (str(e)))
             return
 
-    def uploadRandom(self, bytes, min_gap, chunk_size):
-        HTTP_DEVNULL = "/itt/testing/dev/null"
-
-        ##  Do we have minimum packet gaps?
-        gap = 0
-        if min_gap is not None:
-            gap = float(min_gap)
-
-        ##  Do we have maximum chunk sizes?
-        chunk = 0
-        if chunk_size is not None:
-            chunk = int(chunk_size)
-        
-        ##  Open HTTP connection & send headers
-        http = self.setupUploadConnection(HTTP_DEVNULL)
-
-        ##  Send data
-        i = 0
-        while int(i) < int(bytes):
-            if chunk > 0:
-                ##  Send only as much as we're allowed
-                self.addAndSend(http, os.urandom(chunk))
-                i = i + int(chunk)
-                ##  Sleep for the minimum gap size
-                time.sleep(gap)
-
-            else:
-                ##  Send everything as fast as possible
-                self.addAndSend(http, os.urandom(bytes))
-                i = i + bytes
-
-        ##  XXX: todo: generalise the sha1sum stuff
-        shasum = hashlib.sha1(self.sent_data).hexdigest()
-        log.info("Sent %s bytes" % len(self.sent_data))
-        log.info("SHA1 sum: %s" % shasum)
-
-        ##  XXX: todo: if response ==200, else: error
-        response = http.getresponse()
-        log.info("Response status: %s" % (
-            response.status,
-        ))
-
-
     def setupUploadConnection(self, path):
         HTTP_TIMEOUT = 20
         
-        http = httplib.HTTPConnection(self.config.netloc, timeout=HTTP_TIMEOUT)     ##  Un-hardcode timeout?
+        http = httplib.HTTPConnection(self.test.connection.netloc, timeout=HTTP_TIMEOUT)     ##  Un-hardcode timeout?
 
         http.putrequest("POST", path)
         http.putheader("content-type", "application/octet-stream")
 
-        ##  A quick note why we don't provide content-length: because we
-        ##  don't want to have to pre-calculate it.  We don't have to
-        ##  worry about progress bars, so lets leave it.
-        ##  See: http://tech.hickorywind.org/articles/2008/05/23/content-length-mostly-does-not-matter-the-reverse-bob-barker-rule
-        ##  http.putheader("content-length", len(???))
+        http.putheader("content-length", self.test.content.bytes)
 
         http.endheaders()
 
@@ -128,46 +180,3 @@ class HttpClient(itt.Client):
             self.sent_data,
             data,
         )
-
-
-    def run(self):
-
-        ##  XXX: Replace with a configuration object
-        parser = optparse.OptionParser(
-            add_help_option=True,
-            usage='%prog [options]',
-            prog='itt.HttpClient',
-        )
-
-        parser.add_option('-u', '--url',
-            default='http://localhost:8000/',
-            help='URL to access [default: %default]')
-
-        parser.add_option('-U', '--upload', action="store_true",
-            default=False,
-            help='Run an upload test (mutually exclusive to --download)')
-
-        parser.add_option('-D', '--download', action="store_true",
-            default=False,
-            help='Run an download test (mutually exclusive to --upload)')
-
-        (self.opts, args) = parser.parse_args()
-
-        if len(args) != 0:
-            log.warning("HTTP client takes no arguments, ignoring the ones provided")
-        
-        if self.opts.upload and self.opts.download:
-            log.error("HTTP client can only upload _or_ download, not both")
-        elif not self.opts.upload and not self.opts.download:
-            log.error("HTTP client needs to be told to do an upload or a download")
-        elif self.opts.download:
-            self.download()
-        elif self.opts.upload:
-            self.upload()
-        else:
-            log.error("Something has gone horribly wrong")
-
-
-if __name__ == '__main__':
-    myClient = itt.HttpClient()
-    myClient.run()

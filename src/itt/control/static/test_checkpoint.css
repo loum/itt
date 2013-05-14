@@ -1,0 +1,32 @@
+@import url('/static/itt.css');
+
+#testCheckpointList,
+#testCheckpointSearch {
+    padding-bottom: 2%;
+}
+#nodeHead,
+#insertDateHead,
+#uidHead {
+    padding-left: 2%;
+    text-align: left;
+}
+#nodeHead {
+    width: 30%;
+}
+#insertDateHead {
+    width: 30%;
+}
+#uidHead {
+    width: 15%;
+}
+#roleHead, #actionHead {
+    width: 10%;
+}
+.actionsIcons {
+    padding: 0;
+}
+.imageForm {
+    float: left;
+    padding-left: 5px;
+    padding-right: 5px;
+}

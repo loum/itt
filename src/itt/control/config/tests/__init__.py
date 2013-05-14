@@ -1,1 +1,1 @@
-from test_views import TestConfigView
+from test_config_views import TestConfigViews

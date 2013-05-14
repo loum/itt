@@ -1,0 +1,33 @@
+@import url('/static/itt.css');
+
+#testConnectionList, #testConnectionAdd {
+    padding-bottom: 2%;
+}
+#nameHead, #hostHead {
+    padding-left: 2%;
+    text-align: left;
+    width: 30%;
+}
+#hostHead {
+    width: 30%;
+}
+#portHead {
+    width: 10%;
+}
+#protocolHead {
+    width: 20%;
+}
+#id_name, #id_host {
+    width: 200px;
+}
+#id_port {
+    width: 40px;
+}
+.actionsIcons {
+    padding: 0;
+}
+.imageForm {
+    float: left;
+    padding-left: 5px;
+    padding-right: 5px;
+}

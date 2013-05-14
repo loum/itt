@@ -1,183 +1,57 @@
+""":mod:`itt.test.config` defines the settings that make up a ITT test case.
+"""
+
 __all__ = [
     "TestConfig",
-    "list",
 ]
 
-import ConfigParser
-import io
-
-from types import *
-
-import itt
 from itt.utils.log import log, class_logging
+from itt.utils.typer import (bool_check,
+                             int_check,
+                             float_check,
+                             not_none_check)
 
 
+@class_logging
 class TestConfig(object):
     """Test Configuration...
 
-    XXX: Todo: Doco!
+    .. note::
 
+        All public attribute access is implemented in a Pythonic property
+        decorator style.
+
+    .. attribute:: minimum_gap
+
+        Defines the minimum gap between chunks of data, in seconds.
+        Only valid if chunk_size is not ``None``.
+
+    .. attribute:: chunk_size
+
+        Defines the amount of data that will be sent 'at full speed',
+        before having an optional gap (as defined by *minimum_gap*).
     """
-    def __init__(self, host, port, protocol,
-                 upload=None,
-                 bytes=None,
-                 content=None,
+
+    def __init__(self,
                  minimum_gap=None,
                  chunk_size=None,
-                ):
-        ##  enums...
-        self.VALID_PROTOCOLS = [
-            'http',
-            'ftp',
-            'tftp',
-        ]
-
+    ):
         ##  properties
-        self.host = host
-        self.port = port
-        self.upload = upload
-        self.bytes = bytes
-        self.content = content
-        self.protocol = protocol
-        self.minimum_gap = minimum_gap
-        self.chunk_size = chunk_size
+##  I'm having issues with typer.py not validating ints & floats correctly...
+##  workaround below --pjay
+        self.minimum_gap = None
+        if minimum_gap is not None:
+            self.minimum_gap = float(minimum_gap)
+
+        self.chunk_size = None
+        if chunk_size is not None:
+            self.chunk_size = int(chunk_size)
 
     def __repr__(self):
-        return "<TestConfig host:%s port:%s protocol:%s upload:%s bytes:%s content:%s minimum_gap:%s chunk_size:%s>" % (
-            self.host,
-            self.port,
-            self.protocol,
-            self.upload,
-            self.bytes,
-            self.content,
+        return "<TestConfig minimum_gap:%s chunk_size:%s>" % (
             self.minimum_gap,
             self.chunk_size,
-            )
-    
-    
-    ##--host
-    @property
-    def host(self):
-        return self._host
-
-    @host.setter
-    def host(self, value):
-        if type(value) is str:
-            self._host = value
-        else:
-            ## XXX: throw a proper ITT exception?
-            msg = "Host should be provided as a string (either hostname or IP)"
-            log.error(msg)
-            raise Exception(msg)
-
-
-    ##--port
-    @property
-    def port(self):
-        return self._port
-
-    @port.setter
-    def port(self, value):
-        MAX_PORT = 65535
-
-        try:
-            int(value)
-        except:
-            ## XXX: convert to a ITT exception?
-            msg = "Invalid port number (must be an int)"
-            log.error(msg)
-            raise Exception(msg)
-        
-        if value > 0 and int(value) <= MAX_PORT:
-            self._port = value
-        else:
-            ## XXX: throw a proper ITT exception?
-            msg = "Invalid port number (must be > 0 and < 65536)"
-            log.error(msg)
-            raise Exception(msg)
-
-    
-    ##--netloc
-    ##   -> is the combination of host and port as "host:port"
-    @property
-    def netloc(self):
-        return "%s:%s" % (
-            self.host,
-            self.port,
         )
-
-
-    ##--upload
-    @property
-    def upload(self):
-        return self._upload
-
-    @upload.setter
-    def upload(self, value):
-        if type(value) is bool:
-            self._upload = value
-        else:
-            ## XXX: throw a proper ITT exception?
-            msg = "Upload should be true or false"
-            log.error(msg)
-            raise Exception(msg)
-
-
-    ##--bytes
-    @property
-    def bytes(self):
-        return self._bytes
-
-    @bytes.setter
-    def bytes(self, value):
-        if type(value) is NoneType:
-            self._bytes = value
-        else:
-            try:
-                int(value)
-            except:
-                ## XXX: convert to a ITT exception?
-                msg = "Invalid content size (bytes) (must be an int)"
-                log.error(msg)
-                raise Exception(msg)
-
-            if value > 0:
-                self._bytes = value
-            else:
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid content size (bytes) (must be > 0)"
-                log.error(msg)
-                raise Exception(msg)
-
-
-    ##--content
-    @property
-    def content(self):
-        return self._content
-
-    @content.setter
-    def content(self, value):
-        self._content = value
-
-
-    ##--protocol
-    @property
-    def protocol(self):
-        return self._protocol
-
-    @protocol.setter
-    def protocol(self, value):
-        try:
-            if value.lower() in self.VALID_PROTOCOLS:
-                self._protocol = value.lower()
-            else:
-                raise Exception()
-        except:
-            ## XXX: throw a proper ITT exception?
-            msg = "Invalid protocol"
-            log.error(msg)
-            raise Exception(msg)
-
 
     ##--minimum_gap
     @property
@@ -185,26 +59,9 @@ class TestConfig(object):
         return self._minimum_gap
 
     @minimum_gap.setter
+    @float_check(greater_than=0)
     def minimum_gap(self, value):
-        if type(value) is NoneType:
-            self._minimum_gap = value
-        else:
-            try:
-                float(value)
-            except:
-                ## XXX: convert to a ITT exception?
-                msg = "Invalid minimum gap (must be a float)"
-                log.error(msg)
-                raise Exception(msg)
-
-            if float(value) > 0:
-                self._minimum_gap = value
-            else:
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid minimum gap"
-                log.error(msg)
-                raise Exception(msg)
-
+        self._minimum_gap = value
 
     ##--chunk_size
     @property
@@ -212,22 +69,6 @@ class TestConfig(object):
         return self._chunk_size
 
     @chunk_size.setter
+    @int_check(greater_than=0)
     def chunk_size(self, value):
-        if type(value) is NoneType:
-            self._chunk_size = value
-        else:
-            try:
-                int(value)
-            except:
-                ## XXX: convert to a ITT exception?
-                msg = "Invalid chunk size (must be an int)"
-                log.error(msg)
-                raise Exception(msg)
-
-            if value > 0:
-                self._chunk_size = value
-            else:
-                ## XXX: throw a proper ITT exception?
-                msg = "Invalid chunk size (must be > 0)"
-                log.error(msg)
-                raise Exception(msg)
+        self._chunk_size = value
