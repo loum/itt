@@ -22,7 +22,7 @@ def index(request):
 def update(request):
     """
     """
-    status = HttpResponseRedirect('/testconnection/')
+    response = HttpResponseRedirect('/testconnection/')
 
     try:
         if request.POST['submit']:
@@ -40,11 +40,11 @@ def update(request):
                 c = RequestContext(request,
                                    {'form': form})
 
-                status = HttpResponse(t.render(c))
+                response = HttpResponse(t.render(c))
     except KeyError:
         pass
 
-    return status
+    return response
 
 
 def _index_post(request):
@@ -62,7 +62,7 @@ def _index_post(request):
                 instance = TestConnection.objects.get(name=name)
                 form = TestConnectionForm(request.POST, instance=instance)
 
-            if form:
+            if form is not None:
                 form.save()
     except KeyError:
         pass

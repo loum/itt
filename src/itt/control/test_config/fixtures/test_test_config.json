@@ -5,5 +5,12 @@
     "fields": {
       "name": "config from fixture"
     }
+  },
+  {
+    "pk": 2,
+    "model": "test_config.testconfig",
+    "fields": {
+      "name": "config2 from fixture"
+    }
   }
 ]

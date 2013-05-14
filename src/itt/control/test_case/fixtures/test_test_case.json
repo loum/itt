@@ -1,0 +1,12 @@
+[
+  {
+    "pk": 1, 
+    "model": "test_case.testcase", 
+    "fields": {
+      "test_connection": 1, 
+      "name": "case from fixture", 
+      "test_configuration": 1, 
+      "test_content": 1
+    }
+  }
+]
