@@ -11,6 +11,7 @@ class TestTestContentViews(TransactionTestCase):
     @classmethod
     def setUpClass(cls):
         cls._c = Client()
+        cls._test_name = 'content from fixture'
 
     def test_get(self):
         """Test a GET request to the TestContent index.html.
@@ -33,7 +34,7 @@ class TestTestContentViews(TransactionTestCase):
         request_post = {u'name': [u'tester'],
                         u'static': [u'off'],
                         u'bytes': [u'0'],
-                        u'submit': [u'Add Content'], }
+                        u'submit': [u'Add Test Content'], }
         response = self._c.post('/testcontent/', request_post)
         msg = 'TestContent index.html POST status_code not 302 (Redirect)'
         self.assertEqual(response.status_code, 302, msg)
@@ -54,7 +55,7 @@ class TestTestContentViews(TransactionTestCase):
         """POST to the TestContent update.html (Update Test Config).
         """
         # Check that the "bytest" field equals 1024 before the update.
-        tc_before_update = TestContent.objects.get(name='test from fixture')
+        tc_before_update = TestContent.objects.get(name=self._test_name)
 
         # Bytes.
         expected = 1024
@@ -62,7 +63,7 @@ class TestTestContentViews(TransactionTestCase):
         self.assertEqual(tc_before_update.bytes, expected, msg)
 
         # Prepare the update data.
-        request_post = {u'name': [u'test from fixture'],
+        request_post = {u'name': [u'%s' % self._test_name],
                         u'static': [u'on'],
                         u'bytes': [u'2048'],
                         u'submit': [u'Update Test Content'], }

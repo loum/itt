@@ -32,6 +32,8 @@
 }
 #nav ul a:hover {
     color: #f9cb00;
+    cursor: pointer;
+    cursor: hand;
 }
 #config #mainNav .config a,
 #servers #mainNav .servers a,
