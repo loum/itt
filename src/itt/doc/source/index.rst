@@ -9,21 +9,29 @@
 IP Test Tool
 ============
 .. note::
-    Updated 30 April 2013 -- Sprint 3
+    Updated 15 May 2013 -- Sprint 4
 
-    Sprint 3 aims to introduce the ITT workflows from a system usability
-    perspective.
+    Sprint 4 introduces the ITT Test Case component workflows.
 
 Workflow
 ^^^^^^^^
 .. note::
     Workflow items will evolve and become further defined as project matures
 
+Installation
+------------
+
 * ITT is installed
+
+Management
+----------
 
 * Start the ITT Console
 
 * Login as the default admin user (admin:admin)
+
+ITT Instance Configuration
+--------------------------
 
 * ITT node configuration.  Will it be:
 
@@ -37,9 +45,17 @@ Workflow
 
   * Start select servers
 
+ITT Test Cases
+--------------
+
 * ITT test configuration
 
   * Prepare test cases or use defaults 
+
+ITT Client
+----------
+
+* Select tests
 
 * Run tests
 
@@ -215,5 +231,114 @@ settings.  This screen presents the details around these defaults.
 
 .. image:: _static/itt_server_view.png
     :alt: IP Test Tool Servers menu item
+    :align: center
+    :scale: 75%
+
+Test Settings
+^^^^^^^^^^^^^
+
+In general, an ITT client can be invoked with a predefined ITT Test Case
+whose settings are defined under the **Test Settings** menu option.
+
+The **Test Settings** link is an expandable menu option that groups the Test
+Case components.
+
+.. image:: _static/itt_test_case_structure.png
+    :align: center
+    :scale: 75%
+
+Test Configurations
+-------------------
+
+A **Test Configuration** relate to the way the ITT Client transfers its
+content:
+
+* **Minimum Gap**
+
+    Defines the minimum gap between chunks of data, in seconds.
+    Only valid if chunk_size is not ``None``.
+
+* **Chunk Size**
+
+    Defines the amount of data that will be sent 'at full speed',
+    before having an optional gap (as defined by *minimum_gap*).
+
+.. image:: _static/itt_test_config_view.png
+    :align: center
+    :scale: 75%
+
+Test Content
+------------
+
+The actual content that is transfered durint the test.  Content can be
+prepared for the ITT Client and ITT Server (ITT Server content yet to be
+enabled)
+
+* **Static**
+
+    Defines the nature in which the content is generated.  If ``True``,
+    the content is taken from a static source and guarantees consistency
+    across invocations.  If ``False``, the content is generated randomly.
+
+* **Bytes**
+
+    Defines the size of the content in bytes.
+
+  .. note:: Only valid for random data (that is, if **Filename** is not
+    defined).
+
+.. image:: _static/itt_test_content_view.png
+    :align: center
+    :scale: 75%
+
+Test Connections
+----------------
+
+.. image:: _static/itt_test_connections_view.png
+    :align: center
+    :scale: 75%
+
+* **Hostname**
+
+* **Port**
+
+* **Protocol**
+
+    Must be one of *http*, *ftp*, or *tftp*.
+
+Test Checkpoints
+^^^^^^^^^^^^^^^^
+
+**Test Checkpoints** are predefined events which register a message to
+the local instance ITT Control and Command.  By default, the ITT Client
+and Server instances will register a message at the start of a test transfer
+and at the end of a test transfer.
+
+Periodically, the checkpoints are sent to the Master ITT Control and
+Command.  At any time, the Master instance will feature a snapshot of the
+various test invocations of ITT instances in the field.
+
+Test Checkpoints serve as a test progress indicator and also form the source
+data for the downstream ITT Analyser.
+
+Test Checkpoints Search
+-----------------------
+
+Due to the anticipated high volume of Test Checkpoints generated per ITT
+instance, the **Test Checkpoints** view features a search page that filters
+Checkpoints on Node (ITT instance) names.
+
+  .. note::
+
+    Date based search filtering to be provided at a later date.
+
+.. image:: _static/itt_test_checkpoints_search_view.png
+    :align: center
+    :scale: 75%
+
+Test Checkpoints Results
+------------------------
+
+.. image:: _static/itt_test_checkpoints_results_view.png
     :align: center
     :scale: 75%
